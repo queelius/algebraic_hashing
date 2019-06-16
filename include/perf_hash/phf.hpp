@@ -7,6 +7,8 @@ namespace alex::hash
 {
     struct Hash
     {
+        using value_type = std::string;
+
         uint32_t operator()(uint32_t d, const std::string& s)
         {
             static const uint32_t FNV_PRIME = 16777619;
@@ -20,26 +22,36 @@ namespace alex::hash
         };
     };
 
-    class PerfectHash
+    template <typename T>
+    class PerfectHashFunction
     {
     public:
-        virtual int find(const std::string&) const = 0;
+        virtual int operator()(T const &) const = 0;
     };
 
-    template <class H>
-    class RPH: public PerfectHash
+    // H models a hash function in the family H::value_type -> Z
+    // where Z models some integer type, e.g., uint32_t or int.
+    template <typename H>
+    class RandomPerfectHashFunction
     {
     public:
-        template <class Iter>
-        void generate(Iter begin, Iter end, double r = .5)
+        using value_type = typename H::value_type;
+        using hash_func_type = H;
+
+        RandomPerfectHashFunction(const RandomPerfectHashFunction&) = default;
+        RandomPerfectHashFunction(RandomPerfectHashFunction&&) = default;
+
+        // I models a forward iterator
+        template <typename I>
+        RandomPerfectHashFunction(Iter begin, Iter end, double r = .5)
         {
-            _N = keys.size() / r;
+            _N = std::distance(begin,end) / r;
             std::unordered_set<uint32_t> K;
             for (_l = 0; ; ++_l)
             {
-                for (const auto& k : keys)
+                for (const auto& x = begin; i != end; ++i)
                 {
-                    auto h = _h(_l, k) % _N;
+                    auto h = _h(_l, *x) % _N;
                     if (K.count(h) != 0)
                     {
                         K.clear();
@@ -52,9 +64,9 @@ namespace alex::hash
             }
         }
 
-        int find(const std::string& key) const
+        int operator()(value_type const & x) const
         {
-            return hash(_l, key) % _N;
+            return hash(_l, x) % _N;
         };
 
     private:
@@ -63,14 +75,14 @@ namespace alex::hash
     };
 
     template <class H>
-    class CHD: public PerfectHash
+    class CHD
     {
     public:
 		/*
 			(1) Split S into buckets B[i] = g^(-1)({i}) and S, 0 <= i < r;
 			(2) Sort buckets B[i] in falling order according to size |B[i]|
 				(O(n) time, since numbers to be sorted are small);
-			(3) Initialize array T[0 . . .m-1] with 0’s;
+			(3) Initialize array T[0 . . .m-1] with 0ï¿½s;
 			(4) for all i in {0,...,r-1}, in the order from (2), do:
 				(5) for L = 1, 2, ... repeat forming K[i] = {sigma[L](x) | x in B[i]}
 				    until (|K[i]| == |B[i]|) and (K[i] and {j | T[j] = 1} = empty;
