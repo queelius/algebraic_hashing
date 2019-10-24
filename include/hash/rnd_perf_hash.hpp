@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #include <unordered_set>
 #include <cmath>
 
@@ -8,14 +7,14 @@ namespace alex::hash
 {
     /**
      * RandomPerfectHash<HashIndex> models a perfect hash function
-     * in the family X -> hash_value_type where X is any type hashable by
+     * of type X -> hash_value_type where X is any type hashable by
      * hash functions in HashIndex and hash_value_type is the output of hash
      * functions in HashIndex.
      * 
-     * A perfect hash PH must overload the function call operator,
-     *     PH : X -> HashType.
+     * A perfect hash f must overload the unary function call operator
+     *     f : X -> hash_type.
      *       
-     * HashIndex models a indexed family of hash functions X -> hash_value_type.
+     * HashIndex models an indexed family of hash functions X -> hash_value_type.
      * There must be a constructor HashIndex(HashIndex::index_type) to construct
      * hash functions in the family, e.g., HashIndex(k) constructs the k-th hash function. 
      */
@@ -35,8 +34,8 @@ namespace alex::hash
         template <typename I>
         RandomPerfectHash(I begin, I end, hash_index index, double r = .5)
         {
-            if (r <= 0. || r > 1.)
-                throw std::invalid_argument("load factor 'r' must be a value in (0, 1]");
+            if (r <= 0.) r = std::numeric_limits<double>::epsilon();
+            if (r > 1.)  r = 1.;
 
             _N = static_cast<hash_value_type>(std::ceil(std::distance(begin,end) / r));
             std::unordered_set<uint32_t> K;
