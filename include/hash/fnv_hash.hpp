@@ -1,188 +1,215 @@
+/**
+ * hash<H> models a random (non-cryptographic) hash function of the type
+ *     Hashable -> H
+ * where Hashable is any type defined for fnv_hash and H is a regular type that
+ * models a hash value type which supports xor assignment (^=),
+ * multiplication assignment (*=), and can be constructed from a char type.
+ */
+
 #pragma once
 
 #include <variant>
 #include <tuple>
 #include <optional>
-#include <string_view>
-#include <string>
-#include <typeinfo>
+#include <limits.h>
+#include <vector>
 
-namespace alex::hash
+namespace alex::hash::fnv_hash
 {
     template <typename T>
-    concept bool Xorable = requires(T x)
+    struct fnv_params {};
+
+    template <>
+    struct fnv_params<uint32_t>
     {
-        { x ^ x } -> T;
+         uint32_t const prime = 16777619u;
+         uint32_t const offset_basis = 2166136261;
     };
 
-    template <typename T>
-    concept bool Multipliable = requires(T x)
+    template <>
+    struct fnv_params<uint64_t>
     {
-        { x * x } -> T;
+         uint64_t const prime = 1099511628211;
+         uint64_t const offset_basis = 14695981039346656037;
     };
 
-    template <typename T1, typename T2>
-    concept bool Convertible = requires(T1 x)
+    template <typename H, typename T>
+    H fnv_hash_helper(T x, H h)
     {
-        { static_cast<T1>(x) } -> T2;
+        for (size_t i = 0; i < sizeof(T); ++i)
+        {
+            h ^= static_cast<char>(x & 0xFF);
+            h *= fnv_params<H>::prime;
+            x >>= CHAR_BIT;
+        }
+
+        return h;
     };
 
-    template <typename T>
-    concept bool Iterable() 
+    template <typename H>
+    H fnv_hash(char const v[])
     {
-        return requires(T x)
-        {
-            { x.begin() };
-            { x.end() };
-        } || requires (T x)
-        {
-            { std::begin(x) };
-            { std::end(x) };
-        } || requires (T x)
-        {
-            { begin(x) };
-            { end(x) };
-        };
+        static const char CSTRING_TAG = 7;
 
+        H h = fnv_params<H>::offset_basis;
+        h ^= CSTRING_TAG;
+        h *= fnv_params<H>::prime;
+
+        for (size_t = 0; i < sizeof(v); ++i)
+        {
+            h ^= v[i];
+            h *= fnv_params<H>::prime;
+        }
+
+        return h;
     };
 
-    template <typename T>
-    concept bool FnvHashValueType = Xorable<T> && Multipliable<T>; // && Convertible<T, unsigned int>;
-
-    /**
-     * HashValueType is a RegularType that overloads binary
-     * operations * and ^ in a way that is consistent with
-     * integers. It can also be constructed from integers.
-     */
-    template <typename T>
-    class FnvHash
+    template <typename H>
+    H fnv_hash(uint32_t x)
     {
-    public:
-        using hash_value_type = T;
+        static const char UINT32_TAG = 5;
 
-        T seed() const { return _seed; };
+        H h = fnv_params<H>::offset_basis;        
+        h ^= UINT32_TAG;
+        h *= fnv_params<H>::prime;
 
-        FnvHash(T seed) : _seed(seed) {};
+        return details::fnv_hash_helper(x, h);
+    };
 
-        /**
-         * ValueType is an a type that can be statically cast to HashValueType
-         * or is an iterable collection of ValueType.
-         */
-        template <typename V>
-        T operator()(V const & v) const
+    template <typename H>
+    H fnv_hash(int32_t x)
+    {
+        static const char INT32_TAG = 3;
+
+        H h = fnv_params<H>::offset_basis;        
+        h ^= INT32_TAG;
+        h *= fnv_params<H>::prime;
+
+        return details::fnv_hash_helper(x, h);
+    };
+
+    template <typename H>
+    H fnv_hash(int64_t x)
+    {
+        static const char UINT64_TAG = 17;
+
+        H h = fnv_params<H>::offset_basis;        
+        h ^= INT64_TAG;
+        h *= fnv_params<H>::prime;
+
+        return details::fnv_hash_helper(x, h);
+    };
+
+    template <typename H>
+    H fnv_hash(uint64_t x)
+    {
+        static const char UINT64_TAG = 13;
+
+        H h = fnv_params<H>::offset_basis;        
+        h ^= UINT64_TAG;
+        h *= fnv_params<H>::prime;
+
+        return details::fnv_hash_helper(x, h);
+    };
+    
+    template <typename H>
+    H fnv_hash(char x)
+    {
+        static const char CHAR_TAG = 37;
+
+        H h = fnv_params<H>::offset_basis;
+        h ^= CHAR_TAG;        
+        h *= fnv_params<H>::prime;
+        h ^= x;
+        h *= fnv_params<H>::prime;
+
+        return h;
+    };
+
+    template <typename H, size_t I = 0, typename... V>
+    H fnv_hash(std::tuple<V ...> const & v)
+    {
+        static const char TUPLE_TAG = 31;
+
+        H h = fnv_params<H>::offset_basis;            
+        h ^= TUPLE_TAG;
+        h *= fnv_params<H>::prime;
+
+        h ^= fnv_hash<H>(std::get<I>(v));
+        h *= fnv_params<H>::prime;
+
+        if constexpr(I+1 != sizeof...(V))
         {
-            return _hash(v, _seed);
-        };
+            h ^= fnv_hash<H,I+1>(v);
+            h *= fnv_params<H>::prime;
+        }
 
-    private:
-        T _seed;
+        return h;
+    };
 
-        template <size_t I = 0, typename... V>
-        T _hash(std::tuple<V ...> const & v, T h) const
+    template <typename H, typename... V>
+    H fnv_hash(std::variant<V ...> const & v)
+    {
+        static const char VARIANT_TAG = 119;
+
+        h = fnv_params<H>::offset_basis;             
+        h ^= fnv_hash<H>(VARIANT_TAG);
+        h *= fnv_params<H>::prime;
+
+        std::visit([&h](const auto& x)
         {
-            std::cout << "[tuple]\n";
-            static const T TUPLE_TAG = 31ul;
-            
-            h = _hash(TUPLE_TAG, std::move(h));
-            h = _hash(std::get<I>(v), std::move(h));
+            h ^= fnv_hash<H>(x);
+            h *= fnv_params<H>::prime;
+        }, v);
 
-            if constexpr(I+1 != sizeof...(V))
-                h = _hash<I+1>(v, std::move(h));
-            return h;
-        };
+        return h;
+    };
 
-        // tuple_cdr -> for projections on relations / cartesian products?
-        // tuple_interlace -> re-arranging the order of tuples, maybe like rename in relational algebra?
-        // tuple_cat - concat two tuples. good for "flattening" them.
+    template <typename H, typename V>
+    H fnv_hash(std::optional<V> x)
+    {
+        const static char OPTIONAL_TAG = 29;
+        
+        h = fnv_params<H>::offset_basis;
+        h ^= fnv_hash<H>(OPTIONAL_TAG);
+        h *= fnv_params<H>::prime;
 
-        template <typename... V>
-        T _hash(std::variant<V ...> v, T h) const
+        if (x.has_value())
         {
-            std::cout << "[variant]\n";
-            static const T VARIANT_TAG = 1007;
-            h = _hash(VARIANT_TAG, std::move(h));
+            h ^= fnv_hash(*x);
+            h *= fnv_params<H>::prime;
+        }
 
-            std::visit([&h, this](const auto& x) { h = this->_hash(x, std::move(h)); }, v);
-            return h;
-        };
+        return h;
+    };
 
-        template <typename V>
-        T _hash(std::optional<V> x, T h) const
+    template <typename H, typename T>
+    H fnv_hash(std::vector<T> const & xs)
+    {
+        const static char VECTOR_TAG = 29;
+        
+        h = fnv_params<H>::offset_basis;
+        h ^= fnv_hash<H>(VECTOR_TAG);
+        h *= fnv_params<H>::prime;
+
+        for (auto const & x : xs)
         {
-            std::cout << "[optional]\n";
-            const static T OPTIONAL_TAG = T(29ul);
-            h = _hash(OPTIONAL_TAG, std::move(h));
-            if (x.has_value())
-                return _hash(*x, std::move(h));
-        };
+            h ^= x;
+            h *= fnv_params<H>::prime;
+        }
 
-        T _hash(std::string v, T h) const
+        return h;
+    };
+
+    template <typename X, typename Y>
+    struct default_hash_fn
+    {
+        using codomain = Y;
+        using domain = X;
+
+        Y operator()(X const & x) const
         {
-            std::cout << "[string]\n";
-            const static T STRING_TAG = T(31ul);
-
-            h = _hash(STRING_TAG, std::move(h));
-            for (auto x : v)
-            {
-                h = _hash(x, std::move(h));
-            }
-            return h;
+            return fnv_hash<Y>(x);
         };
-
-        T _hash(int v, T h) const
-        {
-            std::cout << "[int]\n";
-            const static T INT_TAG = T(129ul);
-
-            union Tmp
-            {
-                int v;
-                char c[4];
-            };
-            Tmp tmp;
-            tmp.v = v;
-
-            h = _hash(INT_TAG, std::move(h));
-            h = _hash(tmp.c[0], std::move(h));
-            h = _hash(tmp.c[1], std::move(h));
-            h = _hash(tmp.c[2], std::move(h));
-            h = _hash(tmp.c[3], std::move(h));
-            return h;
-        };
-
-
-        T _hash(std::string_view v, T h) const
-        {
-            std::cout << "[string_view]\n";
-            const static T STRING_VIEW_TAG = T(29ul);
-
-            h = _hash(STRING_VIEW_TAG, std::move(h));
-            for (auto x : v)
-            {
-                h = _hash(x, std::move(h));
-            }
-            return h;
-        };
-
-        /*
-        template <typename V> // requires Convertible<V,T>
-        T _hash(V const & v, T h) const
-        {
-            const static T FNV_PRIME = T(16777619ul);
-            h = std::move(h) ^ static_cast<T>(v);
-            h = std::move(h) * FNV_PRIME;
-            return h;
-        };
-        */
-
-        T _hash(char x, T h) const
-        {
-            const static T FNV_PRIME = T(16777619ul);
-            h = std::move(h) ^ static_cast<T>(x);
-            h = std::move(h) * FNV_PRIME;
-            return h;
-        };
-
-
     };
 }

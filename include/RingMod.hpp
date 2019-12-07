@@ -22,7 +22,7 @@
 
 namespace alex::ringmod
 {
-    // RingMod<N> is integer modulo 2^N
+    // ringmod<N> is integer modulo 2^N
     template <size_t N>
     struct RingMod
     {
