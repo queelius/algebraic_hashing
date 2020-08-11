@@ -68,10 +68,6 @@ namespace alex::math
         mod(array<bool,N> x) : digits(x) {}
         mod() = default;
 
-        operator int() const { return convert<int>(); }
-        operator unsigned int() const { return convert<unsigned int>(); }
-        operator unsigned long long() const { return convert<unsigned long long>(); }
-        operator unsigned long() const { return convert<unsigned long>(); }
         operator size_t() const { return convert<size_t>(); }
 
         template <typename T>
@@ -93,21 +89,13 @@ namespace alex::math
     bool even(mod<N> const & a) { return a(0); }
 
     template <size_t N>
-    mod<N> half(mod<N> a)
-    {
-        for (size_t i = N-1; i < N; --i)
-            if (a(i) == true) { a[i] = false; break; }
-        return a;
-    }
-
-    template <size_t N>
-    bool operator==(mod<N> const & a, mod<N> const & b)
+    bool operator==(mod<N> const & a, mod<N> const & b) noexcept
     {
         return a.digits == b.digits;
     }
 
     template <size_t N>
-    bool operator<(mod<N> const & a, mod<N> const & b)
+    bool operator<(mod<N> const & a, mod<N> const & b) noexcept
     {
         for (size_t i=N-1; i < N; --i)
             if (a(i) != b(i)) return b(i);
@@ -115,7 +103,7 @@ namespace alex::math
     }
 
     template <size_t N>
-    mod<N> operator+(mod<N> a, mod<N> const & b)
+    mod<N> operator+(mod<N> a, mod<N> const & b) noexcept
     {
         bool carry = false;
         for(size_t i = 0; i < N; ++i)
@@ -136,11 +124,10 @@ namespace alex::math
             }
         }
         return a;
-
     }
 
     template <size_t N>
-    mod<N> operator^(mod<N> a, mod<N> const & b)
+    mod<N> operator^(mod<N> a, mod<N> const & b) noexcept
     {
         for(size_t i = 0; i < N; ++i)
             a[i] ^= b(i);
@@ -160,29 +147,6 @@ namespace alex::math
         }
         return c;
     }
-
-    template <size_t N> struct std::hash<mod<N>>
-    {
-        std::size_t operator()(mod<N> const & x) const noexcept
-        {
-            constexpr size_t bsize = 8*sizeof(size_t);
-            size_t hs = 0;
-            size_t h;
-            for (size_t j = 0; j < N / bsize; ++j)
-            {
-                h = 0;
-                for (size_t i = 0; i < bsize; ++i)
-                    h = 2 * h + x(i);
-                hs ^= hash<size_t>(h);
-            }
-            h = 0;
-            for (size_t i = 0; i < N % bsize; ++i)
-                h = 2 * h + x(i);
-            hs ^= hash<size_t>(h);
-
-            return hs;
-        }
-    };
 
     mod<1> operator "" _mod2(char const * x) { return mod<1>(x); }
     mod<2> operator "" _mod4(char const * x) { return mod<2>(x); }
@@ -205,4 +169,39 @@ namespace alex::math
         static mod<N> lowest() { return mod<N>() }
         static mod<N> max() { return mod<N>(array<bool,N>{1}); }
     };    
+
+    template <size_t N>
+    struct std::hash<mod<N>>
+    {
+        static size_t bit_length = 8*sizeof(size_t);
+
+        size_t operator()(mod<N> const & x) const noexcept
+        {
+            size_t hs = 0;
+            for (size_t j = 0; j < N / bit_length; ++j)
+            {
+                size_t h = 0;
+                for (size_t i = 0; i < bit_length; ++i)
+                    if (x(j * bit_length + i)) h |= (1 << i);
+                hs ^= hash<size_t>(h);
+            }
+            h = 0;
+            for (size_t i = 0; i < N % bit_length; ++i)
+                if (x(N / bit_length + i)) h |= (1 << i);                
+            return hs ^= hash<size_t>(h);
+        }
+    };
+
+    struct std::hash<mod<8*sizeof(size_t)>>
+    {
+        static size_t bit_length = 8*sizeof(size_t);
+
+        size_t operator()(mod<bit_length> const & x) const noexcept
+        {
+            size_t h = 0;
+            for (size_t j = 0; j < bit_length; ++j)
+                if (x(j) == true) h |= (1 << j);
+            return hash<size_t>(h);
+        }
+    };
 }
