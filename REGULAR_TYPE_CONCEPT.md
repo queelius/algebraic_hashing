@@ -12,7 +12,7 @@ In C++, a class `X` (object type) that is a `RegularType` if it has the followin
 3. Copy constructor: `X::X(const X&)` must be implemented.
 4. Equality: `bool operator==(const X&)` must be implemented.
 
-For example, the following code snippet must be compile successfully.
+For example, the following code snippet must compile successfully.
 ~~~ cpp
     X x;                        // default constructor
     X y(x);                     // copy constructor
