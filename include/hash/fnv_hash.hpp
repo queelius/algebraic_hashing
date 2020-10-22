@@ -16,6 +16,20 @@
 
 namespace alex::hash::fnv_hash
 {
+    /**
+     * hash_type fnv_hash(uint32_t d, std::string_view s)
+     * {
+     *     static const hash_type FNV_PRIME = 16777619;
+     *     if (d == 0)
+     *         d = FNV_PRIME;
+     *
+     *     for (auto c : s)
+     *         d = (d * FNV_PRIME) ^ c;
+     *
+     *     return d;
+     * }
+     */
+
     template <typename T>
     struct fnv_params {};
 

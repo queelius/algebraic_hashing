@@ -76,6 +76,6 @@ namespace alex::hash
     private:
         codomain const _N;
         H _h;
-        domain _l;
+        codomain _l;
     };
 }
