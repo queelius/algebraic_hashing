@@ -1,0 +1,78 @@
+\documentclass[hidelinks,11pt,final]{article}
+\usepackage{custom}
+
+\renewcommand{\restriction}{\mathord{\upharpoonright}}
+%\newcommand*{\Perm}[2]{{}^{#1}\!P_{#2}}%
+%\newcommand*{\Comb}[2]{{}^{#1}C_{#2}}%
+
+
+\hypersetup{
+    pdftitle={Cryptographic perfect hash functions: A theoretical analysis on space efficiency and entropy},                    % title
+    pdfauthor={Alexander Towell},               % author
+    pdfsubject={computer science},              % subject of the document
+    pdfkeywords={
+        perfect hash function,
+        random oracle,
+        space complexity,
+        maximum entropy,
+        cryptographic hash function},           % keywords
+    colorlinks=false,                           % false: boxed links; true: colored links
+    citecolor=green,                            % color of links to bibliography
+    filecolor=magenta,                          % color of file links
+    urlcolor=green                              % color of external links
+}
+
+\title
+{
+    Rate-distorted cryptographic perfect hash functions\\
+    \large A theoretical analysis on space efficiency, time complexity, and entropy
+}
+
+\author
+{
+    Alexander Towell\\
+    \texttt{atowell@siue.edu}
+}
+\date{}
+
+%\PassOptionsToPackage{unicode}{hyperref}
+%\PassOptionsToPackage{naturalnames}{hyperref}
+
+
+\setglossarystyle{list}
+\loadglsentries{gls-set}
+\loadglsentries{gls-hashing}
+\loadglsentries{gls-custom}
+\makeglossaries
+
+\begin{document}
+\maketitle
+\begin{abstract}
+We analyze a theoretical \emph{perfect hash function} that has three desirable properties: (1) it is a cryptographic hash function; (2) its \emph{in-place} encoding obtains the theoretical lower-bound for the expected space complexity; and (3) its \emph{in-place} encoding is a random bit string with maximum entropy.
+\end{abstract}
+
+\textbf{Keywords:} perfect hash function,
+        random oracle, space complexity,
+        maximum entropy, cryptographic hash function
+
+\tableofcontents
+
+\printglossary[type=symbols,style=list,nogroupskip]
+\printglossary[type=\acronymtype]
+
+\subfile{sections/perf_hash_fn}
+\subfile{sections/random_oracle_phf}
+\subfile{sections/deterministic}
+\subfile{sections/perf_hash_2_lvl_fn}
+\subfile{sections/rate_distorted}
+\subfile{sections/composition}
+\subfile{sections/appendix}
+\printglossary
+
+%\listoffigures
+%\listofalgorithms
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
+

@@ -1,0 +1,131 @@
+\documentclass[ ../main.tex]{subfiles}
+\providecommand{\mainx}{..}
+
+\begin{document}
+\section{A practical two-level perfect hash function}
+
+\COMMENT{
+\begin{algorithm}
+	\caption{Two-level perfect hash function constructor}
+	\label{alg:2ph}
+	\SetKwProg{func}{function}{}{}
+	\KwIn
+	{
+		$\Set{X} \subseteq \Set{U}$ is the objective set,
+		$r \in \SetBuilder{q \in \RatSet}{q \in 2^{-j} \land j \in \NatSet}$ is a load factor, and
+		$k \in \NatSet$ is the number of entries in the intermediate hash level.
+	}
+	\KwOut
+	{
+		A two-level perfect hash function of $\Set{X} \subseteq \Set{U}$ with a load factor $r$ and an intermediate level of $k$ indices, denoted by $\hash_{\Set{X}}^{r} \colon \Set{U} \mapsto \left\{0,\ldots,N\right\}$ where $N \coloneqq \frac{\Card{\Set{X}}}{r}$.
+	}
+	\func{\makehash{$\Set{X}$, $r$, $k$}}
+	{
+		$t \coloneqq \lceil \log_2 k \rceil$\;
+		$N \coloneqq \frac{\Card{\Set{X}}}{r}$\;
+		\tcp{$\Set{X}[0],\ldots,\Set{X}[k-1]$ is a total partition of $\Set{X}$.}
+		$\Set{X}[\ell] \coloneqq \SetBuilder{x \in \Set{X}}{\trunc\!\left(\hash(x' \cat 0'),t\right)' \mod k = \ell}$\;
+		$\Set{Y} \gets \EmptySet$\;
+		\For{$\ell \in \{0,\ldots,k-1\}$}
+		{
+			\For{$n \gets 1$ \KwTo $\infty$}
+			{
+				$\Set{Y}[\ell] \gets \EmptySet$\;
+				$\alpha \gets \True$\;
+				\For{$x \in \Set{X}[\ell]$}
+				{
+					$\beta \coloneqq \trunc\!\left(\hash(x' \cat n'),N\right)$\;
+					\If{$\beta \in \SetUnion[\Set{Y}[\ell]][\Set{Y}]$}
+					{
+						$\alpha \gets \False$\;
+					}
+					$\Set{Y}[\ell] \gets \SetUnion[\Set{Y}[\ell]][\{\beta\}]$\;
+				}
+				\If{$\alpha$}        
+				{
+					$\Set{Y} \gets \SetUnion[\Set{Y}][\Set{Y}[\ell]]$\;
+					\Break\;
+				}
+			}
+			%$A_\ell \gets n'$\;
+			$\Set{A} \gets \SetUnion[\Set{A}][\{\Tuple{\ell,n}\}]$\;
+		}
+		\tcp{A space-optimal serialization of $\Tuple{\Set{A},k,N}$ is $(\ln 2)^{-1}$ bits per element if $r$ is $1$.}
+		\Return $\Tuple{\Set{A},k,N}'$
+	}
+\end{algorithm}
+}
+
+
+\begin{algorithm}
+	\caption{Two-level perfect hash function constructor}
+	\label{alg:2ph}
+	\SetKwProg{func}{function}{}{}
+	\KwIn
+	{
+		$\Set{X} \subseteq \Set{U}$ is the objective set, $r \in \SetBuilder{q \in \RatSet}{q \in 2^{-j} \land j \in \NatSet}$ is the load factor, and $k \in \NatSet$ is the number of entries in the intermediate hash level.
+	}
+	\KwOut
+	{
+		A two-level perfect hash function of $\Set{X} \subseteq \Set{U}$ with a load factor $r$ and an intermediate level of $k$ indices, denoted by $\hash_{\Set{X}}^{r} \colon \Set{U} \mapsto \left\{0,\ldots,N\right\}$ where $N \coloneqq \frac{\Card{\Set{X}}}{r}$.
+	}
+	\func{\makehash{$\Set{X}$, $r$, $k$}}
+	{
+		$N \coloneqq \frac{\Card{\Set{X}}}{r}$\;
+		$t \coloneqq \lceil \log_2 k \rceil$\;
+		\tcp{$\Set{X}[1],\ldots,\Set{X}[k]$ is a total partition of $\Set{X}$ and $\Set{X}[j_1],\ldots,\Set{X}[j_k]$ is in decreasing order of cardinality.}	
+		$\Set{X}[\ell] \coloneqq \SetBuilder{x \in \Set{X}}{\trunc\!\left(\hash(x' \cat 0'),t\right)' \mod k = \ell}$\;
+		$\Set{Y} \gets \EmptySet$\;
+		$\Set{A} \gets \EmptySet$\;		
+		\For{$\ell \gets 1$ \KwTo $k$}
+		{
+			\For{$n \gets 1$ \KwTo $\infty$}
+			{
+				$\beta(x) \coloneqq \trunc\!\left(\hash(x' \cat n'),N\right)$\;
+				$\Set{Y}[\ell] \coloneqq \SetBuilder{\beta(x)}{x \in \Set{X}[\ell]}$\;
+				\If{$\Card{\Set{Y}[\ell]} = \Card{\Set{X}[\ell]} \land \Set{Y}[\ell] \cap \Set{Y} = \EmptySet$}
+				{
+					$\Set{Y} \gets \SetUnion[\Set{Y}][\Set{Y}[\ell]]$\;
+					\Break\;
+				}
+			}
+			$\Set{A} \gets \SetUnion[\Set{A}][\{\Tuple{\ell,n}\}]$\;
+		}
+		\Return $\Tuple{\Set{A},k,N}$
+	}
+\end{algorithm}
+
+
+
+
+
+\subsection{Analysis}
+Suppose we have a set $\Set{X}$ of $m$ elements with some total order $x_{(1)},\ldots,x_{(m)}$ for which we seek a perfect hash function $\hash_{\Set{X}} \colon \Set{U} \mapsto \IntSet$.
+
+We denote the \emph{serialization} of some value $x$ by $x'$.
+If $x$ is already understood to be a serialization, then $x'$ denotes deserialization instead.
+
+By the assumption that the hash function $\hash \colon \Set{U} \mapsto \BitSet^k$ is a random oracle restricted to the codomain $\BitSet^k$, the $n$-th attempt (trial) $\hash\!\left(x_{(j)}' \cat n'\right)$ to find a non-colliding hash for $x_{(j)}$ has a probability of success $p_j = \frac{m-j+1}{m}$ since we have already found hashes for the previous $j-1$ elements and therefore there are only $m-(j-1)$ hashes remaining.
+
+This is an example of the Coupon collector's problem.
+Let $\RV{T_j}$ denote the uncertain number of trials needed to find a non-colliding hash for $x_{(j)}$.
+The total number of trials needed is an uncertain random variable given by
+\begin{equation}
+\RV{T} = \sum_{j=1}^{m} \RV{T_j}\,.
+\end{equation}
+By the linearity of the expectation operator,
+\begin{equation}
+\Expect{\RV{T}} = \sum_{j=1}^{m} \Expect{\RV{T_j}} = \sum_{j=1}^{m} \frac{1}{p_j} = m H_{m-1}\,,
+\end{equation}
+which asymptotically converges to $\Expect{\RV{T}} = m \gamma + m \ln(m-1)$ or on average $\gamma + \ln (m-1)$ trials per element of $\Set{X}$.
+
+If we use the minimum number of bits
+
+The variance of $\RV{T}$ is given by
+\begin{equation}
+\Var{\RV{T}} = \sum_{j=2}^{m }\Var{\RV{T_j}}\,.
+\end{equation}
+
+
+
+\end{document}

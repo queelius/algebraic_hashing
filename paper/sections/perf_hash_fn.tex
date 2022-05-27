@@ -1,0 +1,141 @@
+\documentclass[ ../main.tex]{subfiles}
+\providecommand{\mainx}{..}
+\begin{document}
+\section{Perfect hash functions}
+A \emph{\gls{gls-set}} is an unordered collection of distinct elements.
+If we know the elements in a set, we may denote the set by these elements, e.g., $\{a,c,b\}$ denotes a set whose membes are exactly $a$, $b$, and $c$.
+
+A \emph{\gls{gls-finiteset}} has a finite number of elements.
+For example, $\{ 1, 3, 5 \}$ is a finite set with three elements.
+When sets $\Set{A}$ and $\Set{B}$ are \emph{isomorphic}, denoted by $\Set{A} 
+\cong \Set{B}$, they can be put into a one-to-one correspondence (bijection), e.g., $\{b,a,c\} \cong \{1,2,3\}$.
+Since there exists at least one bijection between isomorphic sets, we can losslessly convert one to the other and thus, isomorphic sets are in some sense equivalent.
+
+The cardinality of a finite set $\Set{A}$ is the number of elements in the set, denoted by $\Card{\Set{A}}$, e.g., $\Card{\left\{ 1, 3, 5\right\}} = 3$.
+A \emph{countably infinite set} is isomorphic to the set of \emph{natural numbers} $\NatSet \coloneqq \{1,2,3,4,5,\ldots\}$.
+
+Given two elements $a$ and $b$, an ordered pair of $a$ then $b$ is denoted by $\Pair{a}{b}$, where $\Pair{a}{b} = \Pair{c}{d}$ \emph{if and only if} $a = c$ and $b = d$.
+Ordered pairs are non-commutative and non-associative, i.e., $\Pair{a}{b} \neq \Pair{b}{a}$ if $a \neq b$ and $\Pair{a}{\Pair{b}{c}} \neq \Pair{\Pair{b}{a}}{c}$.
+
+Related to the ordered pair is the Cartesian product.
+\begin{definition}
+The set $\Set{X} \times \Set{Y} \coloneqq \left\{\Pair{x}{y} \colon x \in 
+\Set{X} \land y \in \Set{Y}\right\}$ is the Cartesian product of sets $\Set{X}$ 
+and $\Set{Y}$.
+\end{definition}
+By the non-commutative and non-associative property of ordered pairs, the Cartesian product is non-commutative and non-associative.
+However, they are isomorphic, i.e., $\Set{X} \times \Set{Y} \cong \Set{Y} \times \Set{X}$.
+
+A \emph{tuple} is a generalization of order pairs which can consist of an arbitrary number of elements, e.g., $\Tuple{x_1,x_2,\ldots,x_n}$.
+\begin{definition}[$n$-fold Cartesian product]
+The $n$-ary Cartesian product of sets $\Set{X}[1],\ldots,\Set{X}[n]$, is given by $\Set{X}[1] \times \cdots \times \Set{X}[n] = \left\{\Tuple{x_1,\ldots,x_n} \colon x_1 \in \Set{X}[1] \land \cdots \land x_n \in \Set{X}[n]\right\}$.
+\end{definition}
+Note that $\Set{X}[1] \times \Set{X}[2] \times \Set{X}[3] \cong \Set{X}[1] \times \left(\Set{X}[2] \times \Set{X}[3]\right) \cong \left(\Set{X}[1] \times \Set{X}[2]\right) \times \Set{X}[3]$, thus we may implicitly convert between them without ambiguity.
+
+If each set in the $n$-ary Cartesian product is the same, the power notation may be used, e.g., $\Set{X}^3 \equiv \Set{X} \times \Set{X} \times \Set{X}$.
+As special cases, the $0$-ary (nullary) Cartesian product is defined to be $\{ \EmptySet \}$, and the $1$-ary (unary) Cartesian product is the identity, e.g., $\Set{X}^1 = \Set{X}$.
+
+
+
+%\begin{example}
+%Consider the number $100$ (base $10$). To determine the bit string $100'$, we perform the following steps:
+%\begin{enumerate}
+%    \item The length of $100'$ is $\lfloor \log_2 100 \rfloor = 6$.
+%    \item Subtract $2^6 = 64$ from $100$ which results in $36$.
+%    \item $36_{10}$ in binary is $100100_2$.
+%    \item $100' = (1\,0\,0\,1\,0\,0)$.
+%\end{enumerate}
+%\end{example}
+
+%A similar mapping may be defined for $\BitSet^m$ and $\{1,2,\ldots,2^m\}$ as given by
+%\begin{equation}
+%    b_m \mapsto \sum_{j=1}^{m} 2^{m - j + 1} b_j\,,
+%\end{equation}
+%where $b_m \in \BitSet^m$.
+%   1   empty
+%   2   0       
+%   3   1
+%   4   00
+%   5   01
+%   6   10
+%   7   11
+%   8   000
+%   9   001
+%   10  010
+%   11  011
+%   12  100
+%   13  101
+%   14  110
+%   15  111
+
+
+The \emph{\gls{gls-hashfunction}} is given by the following definition.
+\begin{definition}
+\emph{Hash functions} of type $\Set{X} \mapsto \Set{Y}$ are just total functions, normally with a finite codomain, with the weak assumption that they will be used as a device to assign elements from $\Set{X}$ a value from $\Set{Y}$ without requiring any particular rule.
+\end{definition}
+For a given bit string $x$ and hash function $\hash$, $y = \hash(x)$ is denoted the \emph{hash} of $x$.
+
+We are particularly interested in \emph{perfect} hash functions as given by the following definition.
+\begin{definition}[Perfect hash function]
+A \emph{\gls{gls-ph}} over the set $\Set{A} \subseteq \Set{X}$, denoted by
+\begin{equation}
+    \hash[\Set{A}] \colon \Set{X} \mapsto \Set{Y}\,,
+\end{equation}
+is an injective function when restricted to $\Set{A}$.\footnote{There are no collisions among elements of $\Set{A}$, $\hash[\Set{A}](x) \neq \hash[\Set{A}](y)$ for all $x, y \in \Set{A}$, $x \neq y$.}
+\end{definition}
+
+\begin{assumption}
+Perfect hash functions are \emph{surjective}.
+\end{assumption}
+
+The \emph{load factor} is given by the following definition.
+\begin{definition}
+\label{def:loadfactor}
+The proportion of hashes mapped to by $\hash_{\Set{A}} \colon \Set{X} \mapsto \NatSet$ over subset $\Set{A}$ is denoted the \gls{gls-loadfactor}.
+Specifically, the load factor of $\hash_{\Set{A}}$ is a rational number given by
+\begin{equation}
+\label{eq:loadfactor}
+    \frac{\Card{\hash_{\Set{A}}(\Set{A})}}{\Card{\Image(\hash_{\Set{A}})}}\,.
+\end{equation}
+\end{definition}
+
+
+\begin{notation}
+A perfect hash function of type $\Set{X} \mapsto \Set{Y}$ over $\Set{A}$ with a load factor $r$ may be denoted by $\hash_{\Set{A}}^{r}$.
+If $m = \Card{\Set{A}}$ and we are interested in drawing attention to the cardinality of the perfect hash function, we may also denote it by $\hash_{m}^{r}$.
+\end{notation}
+
+
+
+
+
+\begin{example}
+Consider the set $\Set{X} \coloneqq \{x_1,x_2,x_3\}$.
+A \gls{gls-ph} of type $\Set{U} \mapsto \NatSet$ over $\Set{X}$ with a load factor $r \coloneqq \frac{3}{5}$ is denoted by $\hash_{\Set{X}}^{0.6}$ or $\hash_{3}^{0.6}$.
+Given the load factor $r$ and $\Set{X}$, we may deduce the codomain of $\hash_{\Set{X}}^{r}$ to be precisely $\{0,1,2,3,4\}$.
+See \cref{fig:perfhash} for an illustration.
+\end{example}
+
+\begin{definition}
+A \emph{minimal} perfect hash has a load factor $1$.
+\end{definition}
+
+\begin{figure}
+\caption{A perfect hash function $\hash_{\Set{X}}^{0.6} \colon \Set{U} \mapsto \{0,1,2,3,4\}$.}
+\label{fig:perfhash}
+\center
+\input{img/pf.tex}
+\end{figure}
+
+Every hash function in $\Set{X} \mapsto \Set{Y}$ is a perfect hash function over some subset of $\Set{X}$, e.g., every hash function is trivially a perfect hash function of $\EmptySet$ and singleton sets.
+
+Assuming $\Set{X}$ and $\Set{Y}$ are finite, the set of hash functions of type $\Set{X} \mapsto \Set{Y}$, which may also be denoted by $\Set{Y}^{\Set{X}}$, has a cardinality
+\begin{equation}
+\Card{\Set{Y}}^{\Card{\Set{X}}}\,.
+\end{equation}
+The set of \emph{perfect} hash functions over $\Set{A} \subseteq \Set{X}$ is a subset of $\Set{X} \mapsto \Set{Y}$ with the predicate that no collisions may occur on any pair of elements in $\Set{A}$.
+The set of perfect hash functions over $\Set{A}$ has a cardinality
+\begin{equation}
+\Perm{\Card{\Set{Y}}}{\Card{\Set{A}}} \Card{\Set{Y}}^{\Card{\Set{X}} - \Card{\Set{A}}}\,.
+\end{equation}
+\end{document}

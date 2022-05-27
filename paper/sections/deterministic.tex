@@ -1,0 +1,31 @@
+\documentclass[ ../main.tex]{subfiles}
+\providecommand{\mainx}{..}
+\begin{document}
+\section{Deterministic algorithm}
+
+
+Random approximate perfect hash function.
+
+
+Perfect hash function maker.
+Default.
+\begin{equation}
+\ph_{\Set{X}} \colon \PS{\Set{U}} \times \RealSet \mapsto \IntSet_{\geq 0}\,.
+\end{equation}
+
+
+This is sort of what we already have.
+\begin{equation}
+\ph_{\Set{X}} \colon \Set{U} \OMap \IntSet_{\geq 0}\,.
+\end{equation}
+
+
+With the cipher monad, we kind of get this
+\begin{equation}
+\ph \colon \PS{\OT{\Set{U}}} \times \RealSet \OMap \IntSet_{\geq 0}\,.
+\end{equation}
+
+Returning a cipher integer, $\OT{\IntSet_{\geq 0}}$, may not have that much of a point, or maybe in some cases it does.
+	
+
+\end{document}

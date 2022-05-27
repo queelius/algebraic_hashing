@@ -1,5 +1,3 @@
-template <typename I>
-double entropy(I begin, I end);
 
 void test_ph()
 {
