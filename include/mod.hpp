@@ -18,7 +18,7 @@ using std::array;
  * It is a lattice, i.e., totally ordered?
  */
 
-namespace alex::math
+namespace hashable
 {
     template <size_t N>
     struct mod
@@ -148,20 +148,12 @@ namespace alex::math
         return c;
     }
 
-    mod<1> operator "" _mod2(char const * x) { return mod<1>(x); }
-    mod<2> operator "" _mod4(char const * x) { return mod<2>(x); }
-    mod<4> operator "" _mod16(char const * x) { return mod<4>(x); }
-    mod<8> operator "" _mod256(char const * x) { return mod<8>(x); }
-    mod<10> operator "" _mod10b(char const * x) { return mod<10>(x); }
-    mod<16> operator "" _mod16b(char const * x) { return mod<16>(x); }
-    mod<32> operator "" _mod32b(char const * x) { return mod<32>(x); }
-    mod<64> operator "" _mod64b(char const * x) { return mod<64>(x); }
-    mod<128> operator "" _mod128(char const * x) { return mod<126>(x); }
-    mod<256> operator "" _mod256(char const * x) { return mod<256>(x); }
-    mod<512> operator "" _mod512b(char const * x) { return mod<512>(x); }
-    mod<1024> operator "" _mod1kb(char const * x) { return mod<1024>(x); }
-    mod<2048> operator "" _mod2kb(char const * x) { return mod<2048>(x); }
-
+    auto operator "" _mod2(char const * x) { return mod<1>(x); }
+    auto operator "" _mod4(char const * x) { return mod<2>(x); }
+    auto operator "" _mod16(char const * x) { return mod<4>(x); }
+    auto operator "" _mod256(char const * x) { return mod<8>(x); }
+    auto operator "" _mod1024(char const * x) { return mod<10>(x); }
+    
     template <size_t N>
     class std::numeric_limits<mod<N>>
     {
@@ -189,19 +181,6 @@ namespace alex::math
             for (size_t i = 0; i < N % bit_length; ++i)
                 if (x(N / bit_length + i)) h |= (1 << i);                
             return hs ^= hash<size_t>(h);
-        }
-    };
-
-    struct std::hash<mod<8*sizeof(size_t)>>
-    {
-        static size_t bit_length = 8*sizeof(size_t);
-
-        size_t operator()(mod<bit_length> const & x) const noexcept
-        {
-            size_t h = 0;
-            for (size_t j = 0; j < bit_length; ++j)
-                if (x(j) == true) h |= (1 << j);
-            return hash<size_t>(h);
         }
     };
 }

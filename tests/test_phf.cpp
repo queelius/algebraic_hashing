@@ -1,5 +1,40 @@
+#include "../include/perfect_hashing/rphf.hpp"
+#include "../include/hashing/fnv_hash.hpp"
 
-void test_ph()
+template <typename I>
+double entropy(I begin, I end);
+
+void test_rphf();
+
+int main()
+{
+    test_rph();
+}
+
+// implementation details
+template <typename I>
+double entropy(I begin, I end)
+{
+    auto N = std::distance(begin, end);
+    std::vector<double> p(N,0);
+    double sum = 0;
+
+    for (auto i = begin; i != end; ++i)
+        sum += *i;
+
+    int j = 0;
+    for (auto i = begin; i != end; ++i)
+        p[j++] = (*i) / sum;
+
+    double entropy = 0;
+    for (auto x : p)
+    {
+        entropy -= std::log2(x) * x;
+    }
+    return entropy;
+}
+
+void test_rphf()
 {
     std::vector<std::string> s(100);
     s[0] = "23klsfjdlajfd;14tg";
@@ -102,11 +137,8 @@ void test_ph()
     s[97] = "1zzzzzzz4663kladfasfjdlajfd;14a1tg";
     s[98] = "adfaggaa331zzzzzzz66kladfasfjdlaaajfd;14tg";
     s[99] = "ggg1zzzzzzz66kladfasfjdlajfd;14taag";
-
-    alex::hash::HashIndex<> fnv_index;
-    auto end = s.begin();
     
-    alex::hash::RandomPerfectHash<alex::hash::HashIndex<>> ph(s.begin(), end, fnv_index);
+    hashing::perfect_hashing::rphf(s.begin(), s.end());
 
     std::cout << "Starting tests...\n\n";
 
@@ -119,59 +151,4 @@ void test_ph()
 
         hashset.insert(hash);
     }
-}
-
-void test_hash()
-{
-    alex::hash::HashIndex<> fnv_index;
-    alex::hash::HashIndex<alex::hash::JenkinsHash<>> jenkins_index;
-
-    unsigned int N = 100;
-    std::vector<int> fnv_freqs(N,0);
-    std::vector<int> jenkins_freqs(N,0);
-
-    std::vector<std::string> s(5);
-    s[0] = "3klsfjdlajfd;14tg";
-    s[1] = "2klsfjdlajfaaaff2333d;14tg";
-    s[2] = "1klsfjdlajsaafd;14tg333";
-    s[3] = "5klsfjdfaflajfd;14tg";
-    s[4] = "66kladfasfjdlajfd;14tg";
-
-    std::cout << "max entropy: " << std::log2(N) << "\n";
-    for (int j = 0; j < 5; ++j)
-    {
-        for (unsigned int i = 0; i < N*N; ++i)
-        {
-            auto i1 = fnv_index(i)(s[j]) % N;
-            auto i2 = jenkins_index(i)(s[j]) % N;
-
-            fnv_freqs[i1]++;
-            jenkins_freqs[i2]++;
-        }
-
-        std::cout << "entropy fnv: " << entropy(fnv_freqs.begin(), fnv_freqs.end()) << "\n";
-        std::cout << "entropy jenkins: " << entropy(jenkins_freqs.begin(), jenkins_freqs.end()) << "\n";
-    }
-}
-
-template <typename I>
-double entropy(I begin, I end)
-{
-    auto N = std::distance(begin, end);
-    std::vector<double> p(N,0);
-    double sum = 0;
-
-    for (auto i = begin; i != end; ++i)
-        sum += *i;
-
-    int j = 0;
-    for (auto i = begin; i != end; ++i)
-        p[j++] = (*i) / sum;
-
-    double entropy = 0;
-    for (auto x : p)
-    {
-        entropy -= std::log2(x) * x;
-    }
-    return entropy;
 }
