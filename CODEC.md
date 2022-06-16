@@ -1,5 +1,5 @@
 Concept: Codec {#codec}
-==============
+=======================
 
 A *datum* is a sequence of bits. A *value* is a sequence of bits and its interpretation. A *value type* is a set of values sharing a common interpretation.
 
@@ -35,9 +35,10 @@ Binary operators apply to the Cartesian of the set of values. We may thus repres
 | `(c,b)`        | `0`            |
 | `(c,c)`        | `0`            |
 
-Codecs 
+Codecs
 ------
-The datums of a value type cannot exist without a computer (physical system) storing them in memory. The way a value type is implemented on a computer is denoted an *object type*. 
+
+The datums of a value type cannot exist without a computer (physical system) storing them in memory. The way a value type is implemented on a computer is denoted an *object type*.
 
 A concept is a named set of requirements. Object type `X` implements the `Codec` concept for an object type `Y` if the following requirements are satisfied:
 
@@ -50,17 +51,20 @@ A concept is a named set of requirements. Object type `X` implements the `Codec`
 4. If objects of type `value_type` has a maximum encoding size, then it may have a public member function named `maximum_bit_length` that returns the maximum bit length of a coded value of type `value_type`.
 
 5. `X` must have a public member function compatible with the signature
+
 ~~~ cpp
 template <OutputIterator O>
 size_type X::encode(value_type, O);
 ~~~
+
 that encodes a value of type `value_type` to the output iterator and returns the number of bits written. Typically, the encode function returns a value of type `size_type` to indicate how many bits were written to the output iterator, but
 it may return something else, like `optional<size_type>`, which evaluates to a `size_type` if successful and otherwise to `null`.
 
 6. `X` must have the member function with signature
+
 ~~~ cpp
 template <InputIterator I>
 optional<value_type> decode(I);
 ~~~
-which decodes an encoded value of type `value_type` from the bits in an input iterator `I`.
 
+which decodes an encoded value of type `value_type` from the bits in an input iterator `I`.

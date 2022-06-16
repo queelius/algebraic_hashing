@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structperfect__hashing_1_1phf__builder" kind="struct" language="C++" prot="public">
+    <compoundname>perfect_hashing::phf_builder</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename H</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1abc268e34bb4d15eb5f8a1320379dd915" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double perfect_hashing::phf_builder&lt; H &gt;::r</definition>
+        <argsstring></argsstring>
+        <name>r</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="52" column="12" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1ac40edafd9e10583018b921d182f0f6c9" prot="public" static="no" mutable="no">
+        <type>H</type>
+        <definition>H perfect_hashing::phf_builder&lt; H &gt;::h</definition>
+        <argsstring></argsstring>
+        <name>h</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="53" column="7" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1ac036c3ce3564a72b9533883303eb9688" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t perfect_hashing::phf_builder&lt; H &gt;::lower_index</definition>
+        <argsstring></argsstring>
+        <name>lower_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="54" column="12" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1a7851a42845c68ea05d3606f094655e26" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t perfect_hashing::phf_builder&lt; H &gt;::upper_index</definition>
+        <argsstring></argsstring>
+        <name>upper_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="55" column="12" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1a562d771a0c2eca591786727546ef25c9" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t perfect_hashing::phf_builder&lt; H &gt;::num_threads</definition>
+        <argsstring></argsstring>
+        <name>num_threads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="56" column="12" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf__builder_1a7edb4a066ada1746bbcb251f4e203c3f" prot="public" static="no" mutable="no">
+        <type>std::chrono::milliseconds</type>
+        <definition>std::chrono::milliseconds perfect_hashing::phf_builder&lt; H &gt;::duration</definition>
+        <argsstring></argsstring>
+        <name>duration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="57" column="31" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1a1e88f062e6b3b5ef944c0fe503dc6063" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::max_index</definition>
+        <argsstring>()</argsstring>
+        <name>max_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="17" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="17" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1a60dac2e5deefd33083f5651b73d03f5f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::min_index</definition>
+        <argsstring>()</argsstring>
+        <name>min_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="22" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="22" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1a8902be705ed817c49d45c14835015d71" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::default_load_factor</definition>
+        <argsstring>()</argsstring>
+        <name>default_load_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="27" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="27" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1abe711061150f4d64e99a7be801b8e213" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::max_load_factor</definition>
+        <argsstring>()</argsstring>
+        <name>max_load_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="32" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="32" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1ae5f9437d58f036d8704bf77792284556" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::min_load_factor</definition>
+        <argsstring>()</argsstring>
+        <name>min_load_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="37" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1a6de3e5cfadd5e03d3081416882cec092" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::default_threads</definition>
+        <argsstring>()</argsstring>
+        <name>default_threads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="42" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="42" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1afba4e2107ac214fa4a783e16150a58de" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto perfect_hashing::phf_builder&lt; H &gt;::max_timeout</definition>
+        <argsstring>()</argsstring>
+        <name>max_timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="47" column="17" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="47" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1ad4553525635f71b82db6dfac2710efa9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>perfect_hashing::phf_builder&lt; H &gt;::phf_builder</definition>
+        <argsstring>()</argsstring>
+        <name>phf_builder</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="59" column="5" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="59" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1ac77cc0c144b5bde38be5e4c5c8e60a99" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto &amp;</type>
+        <definition>auto&amp; perfect_hashing::phf_builder&lt; H &gt;::threads</definition>
+        <argsstring>(size_t n=0)</argsstring>
+        <name>threads</name>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="66" column="11" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="66" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1ab9bf0bd37e6a9403cb552ea0ac71a37a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto &amp;</type>
+        <definition>auto&amp; perfect_hashing::phf_builder&lt; H &gt;::load_factor</definition>
+        <argsstring>(double r)</argsstring>
+        <name>load_factor</name>
+        <param>
+          <type>double</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Set the target load factor, a value in the interval (0,1]. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the target load factor of the perfect hash function. if a perfect hash function cannot be constructed, then the load factor for the perfectly hashed subset has r as an upper-bound. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="78" column="11" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="78" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1ac66a620f58058655c5bebaa89912cbbe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto &amp;</type>
+        <definition>auto&amp; perfect_hashing::phf_builder&lt; H &gt;::timeout</definition>
+        <argsstring>(std::chrono::milliseconds ms)</argsstring>
+        <name>timeout</name>
+        <param>
+          <type>std::chrono::milliseconds</type>
+          <declname>ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="84" column="11" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="84" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1aab9b7ca053258b381b859299d11c2c50" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto &amp;</type>
+        <definition>auto&amp; perfect_hashing::phf_builder&lt; H &gt;::hash_fn</definition>
+        <argsstring>(H h)</argsstring>
+        <name>hash_fn</name>
+        <param>
+          <type>H</type>
+          <declname>h</declname>
+        </param>
+        <briefdescription>
+<para>Set the hash function object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>h</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>hash function </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="94" column="11" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="94" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1aa79897f6b37fc06a264e8c8c4ef31a8e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto &amp;</type>
+        <definition>auto&amp; perfect_hashing::phf_builder&lt; H &gt;::index</definition>
+        <argsstring>(size_t lower=min_index(), size_t upper=max_index())</argsstring>
+        <name>index</name>
+        <param>
+          <type>size_t</type>
+          <declname>lower</declname>
+          <defval>min_index()</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>upper</declname>
+          <defval>max_index()</defval>
+        </param>
+        <briefdescription>
+<para>Sets the index range [lower,upper], the space over which to search for a perfect hash function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lower</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>start of search space </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>upper</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>end of the search space </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="107" column="11" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="107" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1a58929750c9869943f3c20f3290450b79" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename I</type>
+          </param>
+        </templateparamlist>
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf_builder&lt; H &gt;::operator()</definition>
+        <argsstring>(I begin, I end)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>I</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>I</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a random perfect hash function for the range of elements in [begin,end). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>I</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>models a forward iterator </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>start of range </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>end of range </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="124" column="10" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="124" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf__builder_1acc40d931be3842a1d3eee6e809c2ce8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename X</type>
+          </param>
+        </templateparamlist>
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf_builder&lt; H &gt;::operator()</definition>
+        <argsstring>(X xs)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>X</type>
+          <declname>xs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf_builder.hpp" line="191" column="10" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="191" bodyend="194"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>size_t</label>
+      </node>
+      <node id="4">
+        <label>H</label>
+      </node>
+      <node id="3">
+        <label>milliseconds</label>
+      </node>
+      <node id="1">
+        <label>perfect_hashing::phf_builder&lt; H &gt;</label>
+        <link refid="structperfect__hashing_1_1phf__builder"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>r</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>duration</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>h</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>lower_index</edgelabel>
+          <edgelabel>num_threads</edgelabel>
+          <edgelabel>upper_index</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>double</label>
+      </node>
+    </collaborationgraph>
+    <location file="include/perfect_hashing/phf_builder.hpp" line="15" column="3" bodyfile="include/perfect_hashing/phf_builder.hpp" bodystart="16" bodyend="195"/>
+    <listofallmembers>
+      <member refid="structperfect__hashing_1_1phf__builder_1a8902be705ed817c49d45c14835015d71" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>default_load_factor</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a6de3e5cfadd5e03d3081416882cec092" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>default_threads</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a7edb4a066ada1746bbcb251f4e203c3f" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>duration</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ac40edafd9e10583018b921d182f0f6c9" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>h</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1aab9b7ca053258b381b859299d11c2c50" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>hash_fn</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1aa79897f6b37fc06a264e8c8c4ef31a8e" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>index</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ab9bf0bd37e6a9403cb552ea0ac71a37a" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>load_factor</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ac036c3ce3564a72b9533883303eb9688" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>lower_index</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a1e88f062e6b3b5ef944c0fe503dc6063" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>max_index</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1abe711061150f4d64e99a7be801b8e213" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>max_load_factor</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1afba4e2107ac214fa4a783e16150a58de" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>max_timeout</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a60dac2e5deefd33083f5651b73d03f5f" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>min_index</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ae5f9437d58f036d8704bf77792284556" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>min_load_factor</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a562d771a0c2eca591786727546ef25c9" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>num_threads</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a58929750c9869943f3c20f3290450b79" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>operator()</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1acc40d931be3842a1d3eee6e809c2ce8b" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>operator()</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ad4553525635f71b82db6dfac2710efa9" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>phf_builder</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1abc268e34bb4d15eb5f8a1320379dd915" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>r</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ac77cc0c144b5bde38be5e4c5c8e60a99" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>threads</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1ac66a620f58058655c5bebaa89912cbbe" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>timeout</name></member>
+      <member refid="structperfect__hashing_1_1phf__builder_1a7851a42845c68ea05d3606f094655e26" prot="public" virt="non-virtual"><scope>perfect_hashing::phf_builder</scope><name>upper_index</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

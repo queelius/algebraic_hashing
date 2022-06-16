@@ -1,22 +1,31 @@
-# Perfect hashing
+Perfect hash functions
+======================
 
-[Perfect hash functions](@ref phf) may be used for memory efficient storage and
-fast retrieval of items from static sets, among other uses. The CMPH library may
-be used to efficiently generate perfect hash functions. It is efficient in two
-ways:
-1. Perfect hash function generators obtain linear time complexity.
-2. The in-place storage requirements are compact and near-optimal.
+Perfect hash functions may be used for memory efficient storage and
+fast retrieval of items from static sets, among other uses. 
 
-## Description
+Description
+-----------
 
-We implement several data structures that implement the abstract data type of 
-perfect hash functions. For three of these perfect hash functions, we just
-provide a wrapper around the C Minimal Perfect Hashing (CMPH) library.
+We implement two data structures that implement the abstract data type of 
+perfect hash functions.
 
-## Supported Algorithms
+We denote them respectively by `phf` and `phf_lvl2`.
+For small sets, `phf` is more memory efficient and provides faster queries.
+However, construction can be very slow for larger sets.
+In this case, `phf_lvl2` should provide much faster constructions, at the
+cost of slightly slower look-up times and more in-place memory requirements.
+However, it is still quite fast and memory-efficient.
 
-The following perfect hash function generators are available.
-    - CHD
-    - CHD_PH
-    - FCH
+Memory efficiency
+-----------------
+
+More gains in memory efficiency are readily possible by using in-place
+compression, e.g., in `phf`, the `l` value can be easily compressed since
+it should be geometric with a known `p` value. In this case, geometric
+coding may be used. However, since we are only storing a single value,
+there does not seem to be much point in doing so.
+
+It makes more sense to pursue in-place compression for `phf_lvl2`, which stores
+a vector of integers.
 

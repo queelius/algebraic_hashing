@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="phf" kind="page">
+    <compoundname>phf</compoundname>
+    <title>Concept: Perfect Hash Function</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="phf_1md_PERFECT_HASH_FUNCTION"/> A hash function</para>
+<para>$$ f : X \mapsto 0,1 </para>
+    </detaileddescription>
+    <location file="PERFECT_HASH_FUNCTION.md"/>
+  </compounddef>
+</doxygen>

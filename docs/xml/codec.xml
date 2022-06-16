@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="codec" kind="page">
+    <compoundname>codec</compoundname>
+    <title>Concept: Codec</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="codec_1md_CODEC"/></para>
+<para>A <emphasis>datum</emphasis> is a sequence of bits. A <emphasis>value</emphasis> is a sequence of bits and its interpretation. A <emphasis>value type</emphasis> is a set of values sharing a common interpretation.</para>
+<para>We denote the datum assigned to a value <computeroutput>x</computeroutput> by <lsquo/>x<rsquo/><computeroutput>. We say that</computeroutput>x<computeroutput>is *coded* by</computeroutput>x&apos;<computeroutput>. Inversely, we say that</computeroutput>x&apos;<computeroutput>has an *decoding* (interpretation)</computeroutput>x`. A datum without an <emphasis>interpretation</emphasis> has no meaning.</para>
+<para>For example, <emphasis>characters</emphasis> are a fundamental <emphasis>value type</emphasis>. Suppose we have a set of three characters, <computeroutput>{a,b,c}</computeroutput> with codes given by the following table.</para>
+<para><table rows="4" cols="2"><row>
+<entry thead="yes"><para>character   </para>
+</entry><entry thead="yes"><para>code    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>a</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>b</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>10</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>c</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>110</computeroutput>   </para>
+</entry></row>
+</table>
+</para>
+<para>In the above table, <computeroutput>c</computeroutput> and <computeroutput>110</computeroutput> are associated, i.e., <computeroutput>c</computeroutput> is coded as <lsquo/>c<rsquo/> = 110<computeroutput>and</computeroutput>c&apos;<computeroutput>is decoded as</computeroutput>c`.</para>
+<para><blockquote><para><bold>remark</bold>: The codes in the above table are <emphasis>prefix-free</emphasis> codes. A sequence characters with prefix free codes may be unambiguously coded by simply <emphasis>concatenating</emphasis> the invidiaul codes, e.g., <lsquo/>(a b c)<rsquo/> &lt;-&gt; 010110`. </para>
+</blockquote>The interpretation of a value type is dictated by a set of operations. In the case of <emphasis>characters</emphasis>, we snuck in a lot of common understandings, e.g., the common understanding that the set of characters typically has an agreed upon <emphasis>order</emphasis>, i.e., alphabetic order.</para>
+<para>To be explicit, we must also define these operations. For instance, using C++ notation, ordered sets have a less-than binary operator denoted by <computeroutput>&lt;(char,char) -&gt; {0,1}</computeroutput>. Given the way the characters are coded in the above table, the less-than operator has a definition equivalent to <lsquo/>&lt;(x,y) := &lt;(|x<rsquo/>|, |y&apos;|)<computeroutput>, where</computeroutput>|x&apos;|<computeroutput>and</computeroutput>|y&apos;|` are integer types with the common understanding of the less-than operator on integer types.</para>
+<para>Binary operators apply to the Cartesian of the set of values. We may thus represent <computeroutput>&lt;(char, char) -&gt; {0,1}</computeroutput> with the equivalent definition given by the following table.</para>
+<para><table rows="10" cols="2"><row>
+<entry thead="yes"><para><computeroutput>(char, char)</computeroutput>   </para>
+</entry><entry thead="yes"><para><computeroutput>&lt;(char,char)</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(a,a)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(a,b)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>1</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(a,c)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>1</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(b,a)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(b,b)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(b,c)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>1</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(c,a)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(c,b)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>(c,c)</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>0</computeroutput>   </para>
+</entry></row>
+</table>
+</para>
+<sect1 id="codec_1autotoc_md0">
+<title>Codecs</title>
+<para>The datums of a value type cannot exist without a computer (physical system) storing them in memory. The way a value type is implemented on a computer is denoted an <emphasis>object type</emphasis>.</para>
+<para>A concept is a named set of requirements. Object type <computeroutput>X</computeroutput> implements the <computeroutput>Codec</computeroutput> concept for an object type <computeroutput>Y</computeroutput> if the following requirements are satisfied:</para>
+<para><orderedlist>
+<listitem><para><computeroutput>X</computeroutput> is a <ref refid="regular_type_1md_REGULAR_TYPE_CONCEPT" kindref="member">RegularType</ref> .</para>
+</listitem><listitem><para><computeroutput>X</computeroutput> must have a public member type <computeroutput>value_type</computeroutput>, the type of the coded values, i.e., <computeroutput>X::value_type</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>X</computeroutput> must have an public member type <computeroutput>size_type</computeroutput> that is an <computeroutput>Integer</computeroutput> type and has a maximum value large enough to represent any coded value of type <computeroutput>value_type</computeroutput>.</para>
+</listitem><listitem><para>If objects of type <computeroutput>value_type</computeroutput> has a maximum encoding size, then it may have a public member function named <computeroutput>maximum_bit_length</computeroutput> that returns the maximum bit length of a coded value of type <computeroutput>value_type</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>X</computeroutput> must have a public member function compatible with the signature</para>
+</listitem></orderedlist>
+</para>
+<para><programlisting><codeline><highlight class="normal">template<sp/>&lt;OutputIterator<sp/>O&gt;</highlight></codeline>
+<codeline><highlight class="normal">size_type<sp/>X::encode(value_type,<sp/>O);</highlight></codeline>
+</programlisting></para>
+<para>that encodes a value of type <computeroutput>value_type</computeroutput> to the output iterator and returns the number of bits written. Typically, the encode function returns a value of type <computeroutput>size_type</computeroutput> to indicate how many bits were written to the output iterator, but it may return something else, like <computeroutput>optional&lt;size_type&gt;</computeroutput>, which evaluates to a <computeroutput>size_type</computeroutput> if successful and otherwise to <computeroutput>null</computeroutput>.</para>
+<para><orderedlist>
+<listitem><para><computeroutput>X</computeroutput> must have the member function with signature</para>
+</listitem></orderedlist>
+</para>
+<para><programlisting><codeline><highlight class="normal">template<sp/>&lt;InputIterator<sp/>I&gt;</highlight></codeline>
+<codeline><highlight class="normal">optional&lt;value_type&gt;<sp/>decode(I);</highlight></codeline>
+</programlisting></para>
+<para>which decodes an encoded value of type <computeroutput>value_type</computeroutput> from the bits in an input iterator <computeroutput>I</computeroutput>. </para>
+</sect1>
+    </detaileddescription>
+    <location file="CODEC.md"/>
+  </compounddef>
+</doxygen>

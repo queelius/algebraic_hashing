@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_68ce7b852d6aa152301deb52d727ceec" kind="dir">
+    <compoundname>perfect_hashing</compoundname>
+    <innerfile refid="phf_8hpp">phf.hpp</innerfile>
+    <innerfile refid="phf__builder_8hpp">phf_builder.hpp</innerfile>
+    <innerfile refid="phf__lvl2_8hpp">phf_lvl2.hpp</innerfile>
+    <innerfile refid="phf__lvl2__builder_8hpp">phf_lvl2_builder.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/perfect_hashing/"/>
+  </compounddef>
+</doxygen>

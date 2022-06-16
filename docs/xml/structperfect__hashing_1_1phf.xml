@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structperfect__hashing_1_1phf" kind="struct" language="C++" prot="public">
+    <compoundname>perfect_hashing::phf</compoundname>
+    <includes refid="phf_8hpp" local="no">phf.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename H</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structperfect__hashing_1_1phf_1ad2343ecd5f1588985b600fd882311be0" prot="public" static="no">
+        <type>H</type>
+        <definition>using perfect_hashing::phf&lt; H &gt;::hash_fn_type =  H</definition>
+        <argsstring></argsstring>
+        <name>hash_fn_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="21" column="9" bodyfile="include/perfect_hashing/phf.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structperfect__hashing_1_1phf_1a9e30c997705b5f7216d01d3a7e23deb6" prot="public" static="no">
+        <type>typename H::hash_type</type>
+        <definition>using perfect_hashing::phf&lt; H &gt;::hash_type =  typename H::hash_type</definition>
+        <argsstring></argsstring>
+        <name>hash_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="22" column="9" bodyfile="include/perfect_hashing/phf.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf_1aacf5cedb0d105b0b77c6b2ee5b73e952" prot="public" static="no" mutable="no">
+        <type>size_t const</type>
+        <definition>size_t const perfect_hashing::phf&lt; H &gt;::N</definition>
+        <argsstring></argsstring>
+        <name>N</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="61" column="22" bodyfile="include/perfect_hashing/phf.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf_1ae0cdc83363f7e4066decedf2983d7731" prot="public" static="no" mutable="no">
+        <type>H const</type>
+        <definition>H const perfect_hashing::phf&lt; H &gt;::h</definition>
+        <argsstring></argsstring>
+        <name>h</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="62" column="17" bodyfile="include/perfect_hashing/phf.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf_1a573529cbfe0803eb352a8f87de978c9c" prot="public" static="no" mutable="no">
+        <type>size_t const</type>
+        <definition>size_t const perfect_hashing::phf&lt; H &gt;::l</definition>
+        <argsstring></argsstring>
+        <name>l</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="63" column="22" bodyfile="include/perfect_hashing/phf.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structperfect__hashing_1_1phf_1abe0f1e0abb874c0077d44924e765d12c" prot="public" static="no" mutable="no">
+        <type>double const</type>
+        <definition>double const perfect_hashing::phf&lt; H &gt;::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="64" column="22" bodyfile="include/perfect_hashing/phf.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1a39229e0cd4a7f6d13d2baabdce5b0716" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>perfect_hashing::phf&lt; H &gt;::phf</definition>
+        <argsstring>(phf const &amp;)=default</argsstring>
+        <name>phf</name>
+        <param>
+          <type><ref refid="structperfect__hashing_1_1phf" kindref="compound">phf</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="24" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1a69b1f6c44e576134bb9af36ac78d2baa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>perfect_hashing::phf&lt; H &gt;::phf</definition>
+        <argsstring>(phf &amp;&amp;)=default</argsstring>
+        <name>phf</name>
+        <param>
+          <type><ref refid="structperfect__hashing_1_1phf" kindref="compound">phf</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="25" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1a3c6d05abc43818de4b43f8d631ffe500" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>perfect_hashing::phf&lt; H &gt;::phf</definition>
+        <argsstring>(size_t N, H h, size_t l, double err)</argsstring>
+        <name>phf</name>
+        <param>
+          <type>size_t</type>
+          <declname>N</declname>
+        </param>
+        <param>
+          <type>H</type>
+          <declname>h</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="26" column="9" bodyfile="include/perfect_hashing/phf.hpp" bodystart="26" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1afa8ffe1c9e2242c4d30190a9ec2a9164" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename X</type>
+          </param>
+        </templateparamlist>
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf&lt; H &gt;::operator()</definition>
+        <argsstring>(X const &amp;x)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>X const &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>retrieves the minimum hash value </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>X</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the element type, must be hashable by H. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the element to retrieve the hash of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="36" column="14" bodyfile="include/perfect_hashing/phf.hpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1a236fe21705cea826d5d475fe4c167c61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf&lt; H &gt;::max</definition>
+        <argsstring>() const</argsstring>
+        <name>max</name>
+        <briefdescription>
+<para>retrieves the maximum hash value </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="41" column="14" bodyfile="include/perfect_hashing/phf.hpp" bodystart="41" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1ae0ec74af7a55ac27238c5ca062589ddc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf&lt; H &gt;::min</definition>
+        <argsstring>() const</argsstring>
+        <name>min</name>
+        <briefdescription>
+<para>retrieves the minimum hash value </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="46" column="14" bodyfile="include/perfect_hashing/phf.hpp" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1ae1f83bee5d63f08e8b19e9642156529b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf&lt; H &gt;::error_rate</definition>
+        <argsstring>() const</argsstring>
+        <name>error_rate</name>
+        <briefdescription>
+<para>retrieves the error rate </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The error rate is defined by the ratio the number of elements in the set that are perfectly hashed to the number of elements in the set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="54" column="14" bodyfile="include/perfect_hashing/phf.hpp" bodystart="54" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="structperfect__hashing_1_1phf_1aa8dc5d3eda7ab811c50fa2449b183bb7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto perfect_hashing::phf&lt; H &gt;::hash_fn</definition>
+        <argsstring>() const</argsstring>
+        <name>hash_fn</name>
+        <briefdescription>
+<para>retrieves the hash function that is used by phf </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/perfect_hashing/phf.hpp" line="59" column="14" bodyfile="include/perfect_hashing/phf.hpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Models the concept of a perfect hash function. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>phf&lt;H&gt; models a perfect hash function of type Hashable(H) -&gt; size_t where H is a hash function of type Hashable(H) -&gt; size_t using only one level of hashing.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>hash function type </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>H const</label>
+      </node>
+      <node id="3">
+        <label>double const</label>
+      </node>
+      <node id="4">
+        <label>size_t const</label>
+      </node>
+      <node id="1">
+        <label>perfect_hashing::phf&lt; H &gt;</label>
+        <link refid="structperfect__hashing_1_1phf"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>h</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>err</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>N</edgelabel>
+          <edgelabel>l</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/perfect_hashing/phf.hpp" line="19" column="5" bodyfile="include/perfect_hashing/phf.hpp" bodystart="20" bodyend="65"/>
+    <listofallmembers>
+      <member refid="structperfect__hashing_1_1phf_1abe0f1e0abb874c0077d44924e765d12c" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>err</name></member>
+      <member refid="structperfect__hashing_1_1phf_1ae1f83bee5d63f08e8b19e9642156529b" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>error_rate</name></member>
+      <member refid="structperfect__hashing_1_1phf_1ae0cdc83363f7e4066decedf2983d7731" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>h</name></member>
+      <member refid="structperfect__hashing_1_1phf_1aa8dc5d3eda7ab811c50fa2449b183bb7" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>hash_fn</name></member>
+      <member refid="structperfect__hashing_1_1phf_1ad2343ecd5f1588985b600fd882311be0" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>hash_fn_type</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a9e30c997705b5f7216d01d3a7e23deb6" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>hash_type</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a573529cbfe0803eb352a8f87de978c9c" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>l</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a236fe21705cea826d5d475fe4c167c61" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>max</name></member>
+      <member refid="structperfect__hashing_1_1phf_1ae0ec74af7a55ac27238c5ca062589ddc" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>min</name></member>
+      <member refid="structperfect__hashing_1_1phf_1aacf5cedb0d105b0b77c6b2ee5b73e952" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>N</name></member>
+      <member refid="structperfect__hashing_1_1phf_1afa8ffe1c9e2242c4d30190a9ec2a9164" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>operator()</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a39229e0cd4a7f6d13d2baabdce5b0716" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>phf</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a69b1f6c44e576134bb9af36ac78d2baa" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>phf</name></member>
+      <member refid="structperfect__hashing_1_1phf_1a3c6d05abc43818de4b43f8d631ffe500" prot="public" virt="non-virtual"><scope>perfect_hashing::phf</scope><name>phf</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

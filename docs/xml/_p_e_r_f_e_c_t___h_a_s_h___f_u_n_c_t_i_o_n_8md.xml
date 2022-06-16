@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="_p_e_r_f_e_c_t___h_a_s_h___f_u_n_c_t_i_o_n_8md" kind="file" language="Markdown">
+    <compoundname>PERFECT_HASH_FUNCTION.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Concept:<sp/>Perfect<sp/>Hash<sp/>Function<sp/>{#phf}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>hash<sp/>function</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">$$</highlight></codeline>
+<codeline><highlight class="normal">f<sp/>:<sp/>X<sp/>\mapsto<sp/>\{0,1\}^k</highlight></codeline>
+<codeline><highlight class="normal">$$</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">for<sp/>some<sp/>data<sp/>type<sp/>$X$<sp/>maps<sp/>every<sp/>$x<sp/>\in<sp/>X$<sp/>to<sp/>some<sp/>bit<sp/>string<sp/>of<sp/>lengh<sp/>$k<sp/>&gt;<sp/>0$.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>the<sp/>context<sp/>of<sp/>hash<sp/>functions,<sp/>we<sp/>may<sp/>substitute<sp/>*maps*<sp/>with<sp/>*hashes*,<sp/>i.e.,</highlight></codeline>
+<codeline><highlight class="normal">$x$<sp/>*hashes*<sp/>to<sp/>$f(x)$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>collision<sp/>occurs<sp/>between<sp/>two<sp/>values<sp/>$x,y<sp/>\in<sp/>X$,<sp/>$x<sp/>\neq<sp/>y$,<sp/>if<sp/>$f(x)<sp/>=<sp/>f(y)$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>**perfect**<sp/>hash<sp/>function<sp/>$f$<sp/>over<sp/>some<sp/>subset<sp/>$X&apos;<sp/>\subseteq<sp/>X$<sp/>(where<sp/>$X$<sp/>may</highlight></codeline>
+<codeline><highlight class="normal">be<sp/>some<sp/>data<sp/>type,<sp/>like<sp/>a<sp/>string)<sp/>satisfies<sp/>two<sp/>conditions:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>$f<sp/>\colon<sp/>X<sp/>\mapsto<sp/>Y$<sp/>is<sp/>a<sp/>hash<sp/>function.</highlight></codeline>
+<codeline><highlight class="normal">2.<sp/>$f$<sp/>is<sp/>one-to-one<sp/>over<sp/>$X&apos;$,<sp/>i.e.,<sp/>no<sp/>hash<sp/>collisions<sp/>occur<sp/>on<sp/>any<sp/>pair<sp/>of</highlight></codeline>
+<codeline><highlight class="normal">elements<sp/>in<sp/>$X&apos;$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>perfect<sp/>hash<sp/>function<sp/>$f$<sp/>is<sp/>a<sp/>*minimal*<sp/>perfect<sp/>hash<sp/>function<sp/>if<sp/>it<sp/>has<sp/>a</highlight></codeline>
+<codeline><highlight class="normal">range<sp/>of<sp/>$[0,m-1]$<sp/>where<sp/>$m$<sp/>is<sp/>the<sp/>cardinality<sp/>of<sp/>$X&apos;$.<sp/>(Note<sp/>that<sp/>we<sp/>may</highlight></codeline>
+<codeline><highlight class="normal">encode<sp/>each<sp/>integer<sp/>in<sp/>the<sp/>range<sp/>$[0,m-1]$<sp/>using<sp/>a<sp/>standard<sp/>binary<sp/>encoding<sp/>so</highlight></codeline>
+<codeline><highlight class="normal">that<sp/>$f$<sp/>still<sp/>has<sp/>a<sp/>codomain<sp/>${0,1}^k$.)</highlight></codeline>
+    </programlisting>
+    <location file="PERFECT_HASH_FUNCTION.md"/>
+  </compounddef>
+</doxygen>

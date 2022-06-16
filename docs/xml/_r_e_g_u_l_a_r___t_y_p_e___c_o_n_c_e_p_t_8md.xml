@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="_r_e_g_u_l_a_r___t_y_p_e___c_o_n_c_e_p_t_8md" kind="file" language="Markdown">
+    <compoundname>REGULAR_TYPE_CONCEPT.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">Concept:<sp/>RegularType<sp/>{#regular_type}</highlight></codeline>
+<codeline><highlight class="normal">====================================</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>`RegularType`<sp/>is<sp/>a<sp/>concept<sp/>that<sp/>requires<sp/>the<sp/>following.<sp/>Consider<sp/>an<sp/>object<sp/>type<sp/>`X`.<sp/>If<sp/>`X`<sp/>is<sp/>a<sp/>`RegularType`,<sp/>then<sp/>at<sp/>minimum<sp/>it<sp/>implements<sp/>assignment,<sp/>default<sp/>constructor,<sp/>copy<sp/>constructor,<sp/>and<sp/>equality<sp/>comparison.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">C++<sp/>regular<sp/>types</highlight></codeline>
+<codeline><highlight class="normal">-----------------</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>C++,<sp/>a<sp/>class<sp/>`X`<sp/>(object<sp/>type)<sp/>that<sp/>is<sp/>a<sp/>`RegularType`<sp/>if<sp/>it<sp/>has<sp/>the<sp/>following<sp/>operations<sp/>(overload<sp/>set):</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>Assignment:<sp/>`bool<sp/>operator=(const<sp/>X&amp;)`<sp/>must<sp/>be<sp/>implemented.</highlight></codeline>
+<codeline><highlight class="normal">2.<sp/>Default<sp/>constructor:<sp/>`X::X()`<sp/>must<sp/>be<sp/>implemented.</highlight></codeline>
+<codeline><highlight class="normal">3.<sp/>Copy<sp/>constructor:<sp/>`X::X(const<sp/>X&amp;)`<sp/>must<sp/>be<sp/>implemented.</highlight></codeline>
+<codeline><highlight class="normal">4.<sp/>Equality:<sp/>`bool<sp/>operator==(const<sp/>X&amp;)`<sp/>must<sp/>be<sp/>implemented.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>example,<sp/>the<sp/>following<sp/>code<sp/>snippet<sp/>must<sp/>compile<sp/>successfully.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">~~~<sp/>cpp</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>X<sp/>x;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>default<sp/>constructor</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>X<sp/>y(x);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>copy<sp/>constructor</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::static_assert(y<sp/>==<sp/>x);<sp/>//<sp/>equality<sp/>comparison</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>y<sp/>=<sp/>x;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>assignment</highlight></codeline>
+<codeline><highlight class="normal">~~~</highlight></codeline>
+    </programlisting>
+    <location file="REGULAR_TYPE_CONCEPT.md"/>
+  </compounddef>
+</doxygen>

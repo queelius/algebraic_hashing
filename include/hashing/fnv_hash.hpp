@@ -6,43 +6,40 @@
 
 #pragma once
 
-#include <variant>
-#include <tuple>
-#include <optional>
 #include <limits.h>
 #include <vector>
-
+#include <cstring>
+#include <variant>
+#include <optional>
+#include <tuple>
+#include <string>
 namespace hashing
 {
-    struct fnv_params
-    {
-         size_t const prime = 1099511628211;
-         size_t const offset_basis = 14695981039346656037;
-    };
-
-    struct fnv_hash
-    {
-        auto operator()(T const & x) const
-        {
-            details::fnv_hash(x);
-        }
-    };
-
     namespace details
     {
-        template <typename T>
-        auto fnv_hash(T x)
+        struct fnv_params
+        {
+            static size_t const prime = 1099511628211ul;
+            static size_t const offset_basis = 14695981039346656037ul;
+        };
+
+        auto fnv_hash(char x)
         {
             auto h = fnv_params::offset_basis;
-            h ^= fnv_params::prime;
-            
+            h ^= x;
+            h *= fnv_params::prime;
+            return h;
+        }
+
+        template <typename T>
+        auto fnv_hash_helper(T x, size_t h)
+        {
             for (size_t i = 0; i < sizeof(T); ++i)
             {
                 h ^= static_cast<char>(x & 0xFF);
                 h *= fnv_params::prime;
                 x >>= CHAR_BIT;
             }
-
             return h;
         }
 
@@ -50,16 +47,31 @@ namespace hashing
         {
             static const char CSTRING_TAG = 7;
 
-            H h = fnv_params::offset_basis;
+            auto h = fnv_params::offset_basis;
             h ^= CSTRING_TAG;
             h *= fnv_params::prime;
 
-            for (size_t = 0; i < sizeof(v); ++i)
+            for (size_t i = 0; i < strlen(v); ++i)
             {
                 h ^= v[i];
                 h *= fnv_params::prime;
             }
+            return h;
+        }
 
+        auto fnv_hash(std::string const & x)
+        {
+            static const char STRING_TAG = 101;
+
+            auto h = fnv_params::offset_basis;
+            h ^= STRING_TAG;
+            h *= fnv_params::prime;           
+
+            for (size_t i = 0; i < x.size(); ++i)
+            {
+                h ^= x[i];
+                h *= fnv_params::prime;
+            }
             return h;
         }
 
@@ -70,8 +82,7 @@ namespace hashing
             auto h = fnv_params::offset_basis;        
             h ^= UINT32_TAG;
             h *= fnv_params::prime;
-
-            return h ^ fnv_hash(x);
+            return fnv_hash_helper(x,h);
         }
 
         auto fnv_hash(int32_t x)
@@ -80,20 +91,18 @@ namespace hashing
 
             auto h = fnv_params::offset_basis;        
             h ^= INT32_TAG;
-            h *= fnv_params<H>::prime;
-
-            return h ^ fnv_hash(x);
+            h *= fnv_params::prime;
+            return fnv_hash_helper(x,h);
         }
 
         auto fnv_hash(int64_t x)
         {
-            static const char UINT64_TAG = 17;
+            static const char INT64_TAG = 17;
 
             auto h = fnv_params::offset_basis;        
             h ^= INT64_TAG;
             h *= fnv_params::prime;
-
-            return h ^ fnv_hash(x);
+            return fnv_hash_helper(x,h);
         }
 
         auto fnv_hash(uint64_t x)
@@ -103,23 +112,27 @@ namespace hashing
             auto h = fnv_params::offset_basis;        
             h ^= UINT64_TAG;
             h *= fnv_params::prime;
-
-            return h ^ fnv_hash(x);
+            return fnv_hash_helper(x,h);
         }
-        
-        auto fnv_hash(char x)
-        {
-            static const char CHAR_TAG = 37;
 
+        template <typename T>
+        auto fnv_hash(std::vector<T> const & xs)
+        {
+            const static char VECTOR_TAG = 29;
+            
             auto h = fnv_params::offset_basis;
-            h ^= CHAR_TAG;        
+            h ^= fnv_hash(VECTOR_TAG);
             h *= fnv_params::prime;
-            h ^= x;
-            h *= fnv_params::prime;
+
+            for (auto const & x : xs)
+            {
+                h ^= x;
+                h *= fnv_params::prime;
+            }
 
             return h;
-        };
-
+        }
+        
         template <size_t I = 0, typename... V>
         auto fnv_hash(std::tuple<V ...> const & v)
         {
@@ -147,7 +160,7 @@ namespace hashing
             static const char VARIANT_TAG = 119;
 
             auto h = fnv_params::offset_basis;             
-            h ^= fnv_hash<H>(VARIANT_TAG);
+            h ^= fnv_hash(VARIANT_TAG);
             h *= fnv_params::prime;
 
             std::visit([&h](const auto& x)
@@ -173,26 +186,19 @@ namespace hashing
                 h ^= fnv_hash(*x);
                 h *= fnv_params::prime;
             }
-
             return h;
         }
 
-        template <typename T>
-        auto fnv_hash(std::vector<T> const & xs)
+    }    
+    
+    struct fnv_hash
+    {
+        using hash_type = size_t;
+
+        template <typename X>
+        auto operator()(X const & x) const
         {
-            const static char VECTOR_TAG = 29;
-            
-            auto h = fnv_params::offset_basis;
-            h ^= fnv_hash(VECTOR_TAG);
-            h *= fnv_params::prime;
-
-            for (auto const & x : xs)
-            {
-                h ^= x;
-                h *= fnv_params::prime;
-            }
-
-            return h;
+            return details::fnv_hash(x);
         }
-    }
+    };
 }

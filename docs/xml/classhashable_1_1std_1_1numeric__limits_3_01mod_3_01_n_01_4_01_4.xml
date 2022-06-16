@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classhashable_1_1std_1_1numeric__limits_3_01mod_3_01_n_01_4_01_4" kind="class" language="C++" prot="public">
+    <compoundname>hashable::std::numeric_limits&lt; mod&lt; N &gt; &gt;</compoundname>
+    <templateparamlist>
+      <param>
+        <type>size_t</type>
+        <declname>N</declname>
+        <defname>N</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classhashable_1_1std_1_1numeric__limits_3_01mod_3_01_n_01_4_01_4_1a65acd85ad76008685f5f6d5eae260b54" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structhashable_1_1mod" kindref="compound">mod</ref>&lt; N &gt;</type>
+        <definition>static mod&lt;N&gt; hashable::std::numeric_limits&lt; mod&lt; N &gt; &gt;::lowest</definition>
+        <argsstring>()</argsstring>
+        <name>lowest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mod.hpp" line="161" column="20" bodyfile="include/mod.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classhashable_1_1std_1_1numeric__limits_3_01mod_3_01_n_01_4_01_4_1ac545152851cab210691dc01c2cb8f83b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structhashable_1_1mod" kindref="compound">mod</ref>&lt; N &gt;</type>
+        <definition>static mod&lt;N&gt; hashable::std::numeric_limits&lt; mod&lt; N &gt; &gt;::max</definition>
+        <argsstring>()</argsstring>
+        <name>max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mod.hpp" line="162" column="20" bodyfile="include/mod.hpp" bodystart="162" bodyend="162"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/mod.hpp" line="158" column="5" bodyfile="include/mod.hpp" bodystart="159" bodyend="163"/>
+    <listofallmembers>
+      <member refid="classhashable_1_1std_1_1numeric__limits_3_01mod_3_01_n_01_4_01_4_1a65acd85ad76008685f5f6d5eae260b54" prot="public" virt="non-virtual"><scope>hashable::std::numeric_limits&lt; mod&lt; N &gt; &gt;</scope><name>lowest</name></member>
+      <member refid="classhashable_1_1std_1_1numeric__limits_3_01mod_3_01_n_01_4_01_4_1ac545152851cab210691dc01c2cb8f83b" prot="public" virt="non-virtual"><scope>hashable::std::numeric_limits&lt; mod&lt; N &gt; &gt;</scope><name>max</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

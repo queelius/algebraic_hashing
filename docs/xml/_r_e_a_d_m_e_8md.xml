@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">Perfect<sp/>hash<sp/>functions</highlight></codeline>
+<codeline><highlight class="normal">======================</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Perfect<sp/>hash<sp/>functions<sp/>may<sp/>be<sp/>used<sp/>for<sp/>memory<sp/>efficient<sp/>storage<sp/>and</highlight></codeline>
+<codeline><highlight class="normal">fast<sp/>retrieval<sp/>of<sp/>items<sp/>from<sp/>static<sp/>sets,<sp/>among<sp/>other<sp/>uses.<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Description</highlight></codeline>
+<codeline><highlight class="normal">-----------</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>implement<sp/>two<sp/>data<sp/>structures<sp/>that<sp/>implement<sp/>the<sp/>abstract<sp/>data<sp/>type<sp/>of<sp/></highlight></codeline>
+<codeline><highlight class="normal">perfect<sp/>hash<sp/>functions.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>denote<sp/>them<sp/>respectively<sp/>by<sp/>`phf`<sp/>and<sp/>`phf_lvl2`.</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>small<sp/>sets,<sp/>`phf`<sp/>is<sp/>more<sp/>memory<sp/>efficient<sp/>and<sp/>provides<sp/>faster<sp/>queries.</highlight></codeline>
+<codeline><highlight class="normal">However,<sp/>construction<sp/>can<sp/>be<sp/>very<sp/>slow<sp/>for<sp/>larger<sp/>sets.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>this<sp/>case,<sp/>`phf_lvl2`<sp/>should<sp/>provide<sp/>much<sp/>faster<sp/>constructions,<sp/>at<sp/>the</highlight></codeline>
+<codeline><highlight class="normal">cost<sp/>of<sp/>slightly<sp/>slower<sp/>look-up<sp/>times<sp/>and<sp/>more<sp/>in-place<sp/>memory<sp/>requirements.</highlight></codeline>
+<codeline><highlight class="normal">However,<sp/>it<sp/>is<sp/>still<sp/>quite<sp/>fast<sp/>and<sp/>memory-efficient.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Memory<sp/>efficiency</highlight></codeline>
+<codeline><highlight class="normal">-----------------</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">More<sp/>gains<sp/>in<sp/>memory<sp/>efficiency<sp/>are<sp/>readily<sp/>possible<sp/>by<sp/>using<sp/>in-place</highlight></codeline>
+<codeline><highlight class="normal">compression,<sp/>e.g.,<sp/>in<sp/>`phf`,<sp/>the<sp/>`l`<sp/>value<sp/>can<sp/>be<sp/>easily<sp/>compressed<sp/>since</highlight></codeline>
+<codeline><highlight class="normal">it<sp/>should<sp/>be<sp/>geometric<sp/>with<sp/>a<sp/>known<sp/>`p`<sp/>value.<sp/>In<sp/>this<sp/>case,<sp/>geometric</highlight></codeline>
+<codeline><highlight class="normal">coding<sp/>may<sp/>be<sp/>used.<sp/>However,<sp/>since<sp/>we<sp/>are<sp/>only<sp/>storing<sp/>a<sp/>single<sp/>value,</highlight></codeline>
+<codeline><highlight class="normal">there<sp/>does<sp/>not<sp/>seem<sp/>to<sp/>be<sp/>much<sp/>point<sp/>in<sp/>doing<sp/>so.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">It<sp/>makes<sp/>more<sp/>sense<sp/>to<sp/>pursue<sp/>in-place<sp/>compression<sp/>for<sp/>`phf_lvl2`,<sp/>which<sp/>stores</highlight></codeline>
+<codeline><highlight class="normal">a<sp/>vector<sp/>of<sp/>integers.</highlight></codeline>
+<codeline></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

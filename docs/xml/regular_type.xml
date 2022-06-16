@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="regular_type" kind="page">
+    <compoundname>regular_type</compoundname>
+    <title>Concept: RegularType</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="regular_type_1md_REGULAR_TYPE_CONCEPT"/></para>
+<para>A <computeroutput>RegularType</computeroutput> is a concept that requires the following. Consider an object type <computeroutput>X</computeroutput>. If <computeroutput>X</computeroutput> is a <computeroutput>RegularType</computeroutput>, then at minimum it implements assignment, default constructor, copy constructor, and equality comparison.</para>
+<sect1 id="regular_type_1autotoc_md3">
+<title>C++ regular types</title>
+<para>In C++, a class <computeroutput>X</computeroutput> (object type) that is a <computeroutput>RegularType</computeroutput> if it has the following operations (overload set):</para>
+<para><orderedlist>
+<listitem><para>Assignment: <computeroutput>bool operator=(const X&amp;)</computeroutput> must be implemented.</para>
+</listitem><listitem><para>Default constructor: <computeroutput>X::X()</computeroutput> must be implemented.</para>
+</listitem><listitem><para>Copy constructor: <computeroutput>X::X(const X&amp;)</computeroutput> must be implemented.</para>
+</listitem><listitem><para>Equality: <computeroutput>bool operator==(const X&amp;)</computeroutput> must be implemented.</para>
+</listitem></orderedlist>
+</para>
+<para>For example, the following code snippet must compile successfully.</para>
+<para><programlisting><codeline><highlight class="normal">X<sp/>x;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>default<sp/>constructor</highlight></codeline>
+<codeline><highlight class="normal">X<sp/>y(x);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>copy<sp/>constructor</highlight></codeline>
+<codeline><highlight class="normal">std::static_assert(y<sp/>==<sp/>x);<sp/>//<sp/>equality<sp/>comparison</highlight></codeline>
+<codeline><highlight class="normal">y<sp/>=<sp/>x;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>assignment</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <location file="REGULAR_TYPE_CONCEPT.md"/>
+  </compounddef>
+</doxygen>

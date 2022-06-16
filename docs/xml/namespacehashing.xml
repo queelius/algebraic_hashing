@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacehashing" kind="namespace" language="C++">
+    <compoundname>hashing</compoundname>
+    <innerclass refid="structhashing_1_1fnv__hash" prot="public">hashing::fnv_hash</innerclass>
+    <innernamespace refid="namespacehashing_1_1details">hashing::details</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="structhashing_1_1fnv__hash" kindref="compound">fnv_hash</ref> models a non-cryptographic hash function of the type <verbatim>Hashable -&gt; size_t.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="include/hashing/fnv_hash.hpp" line="16" column="1"/>
+  </compounddef>
+</doxygen>
