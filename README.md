@@ -7,14 +7,13 @@ fast retrieval of items from static sets, among other uses.
 Description
 -----------
 
-We implement two data structures that implement the abstract data type of 
-perfect hash functions.
-
+We implement two data structures that model the concept of perfect hash
+functions.
 We denote them respectively by `phf` and `phf_lvl2`.
 For small sets, `phf` is more memory efficient and provides faster queries.
 However, construction can be very slow for larger sets.
-In this case, `phf_lvl2` should provide much faster constructions, at the
-cost of slightly slower look-up times and more in-place memory requirements.
+`phf_lvl2` provides much faster constructions at the
+cost of slightly slower queries and more in-place memory requirements.
 However, it is still quite fast and memory-efficient.
 
 Memory efficiency

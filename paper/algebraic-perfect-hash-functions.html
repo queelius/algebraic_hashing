@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Algebraic perfect hash functions</title>
+  <meta name="description" content="Algebraic perfect hash functions" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Algebraic perfect hash functions" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Algebraic perfect hash functions" />
+  
+  
+  
+
+<meta name="author" content="Alex Towell" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path=""><a href="#algebraic-perfect-hash-functions"><i class="fa fa-check"></i><b>1</b> Algebraic perfect hash functions</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Algebraic perfect hash functions</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Algebraic perfect hash functions</h1>
+<p class="author"><em>Alex Towell</em></p>
+</div>
+<div id="algebraic-perfect-hash-functions" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">1</span> Algebraic perfect hash functions<a href="#algebraic-perfect-hash-functions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>See the <a href="https://queelius.github.io/perfect_hash_functions/index.html">function reference</a></p>
+<p>A <em>set</em> is an unordered collection of distinct elements.
+If we know the elements in a set are given by <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span>, we may denote
+the set with the notation <span class="math inline">\(\{a,c,b\}\)</span>.</p>
+<p>A <em>finite</em> set has a finite number of elements.
+For example, <span class="math inline">\(\{ 1, 3, 5 \}\)</span> is a finite set with three elements.
+When sets <span class="math inline">\(\mathbb{A}\)</span> and <span class="math inline">\(\mathbb{B}\)</span> are <em>isomorphic</em>, denoted by
+<span class="math inline">\(\mathbb{A} \cong \mathbb{B}\)</span>, they can be put into a one-to-one correspondence
+(bijection), e.g., <span class="math inline">\(\{b,a,c\} \cong \{1,2,3\}\)</span>.
+Since there exists at least one bijection between isomorphic sets, we can
+losslessly convert one to the other and thus, isomorphic sets are in some sense
+equivalent.</p>
+<p>The cardinality of a finite set <span class="math inline">\(\mathbb{A}\)</span> is the number of elements in the
+set, denoted by <span class="math inline">\(|\mathbb{A}|\)</span>, e.g., <span class="math inline">\(|\{ 1, 3, 5\}| = 3\)</span>.
+A <em>countably infinite</em> set is isomorphic to the set of natural numbers
+<span class="math inline">\(\mathbb{N} = \{1,2,3,\ldots\}\)</span>.</p>
+<p>Given two elements <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>, an ordered pair of <span class="math inline">\(a\)</span> then <span class="math inline">\(b\)</span> is denoted by
+<span class="math inline">\((a,b)\)</span>, where <span class="math inline">\((a,b) = (c,d)\)</span> iff <span class="math inline">\(a = c\)</span> and <span class="math inline">\(b = d\)</span>.
+Ordered pairs are non-commutative and non-associative, i.e., <span class="math inline">\((a,b) \neq (b,a)\)</span>
+if <span class="math inline">\(a \neq b\)</span> and <span class="math inline">\(\bigl(a,(b,c)\bigr) \neq \bigl((b,a),c\bigr)\)</span>.</p>
+<p>Related to the ordered pair is the Cartesian product.</p>
+<div class="definition">
+<p><span id="def:unlabeled-div-1" class="definition"><strong>Definition 1.1  </strong></span>The set
+<span class="math display">\[
+\mathbb{X} \times \mathbb{Y} \coloneqq \left\{(x,y) \colon x \in
+\mathbb{X} \land y \in \mathbb{Y}\right\}
+\]</span>
+is the Cartesian product of sets <span class="math inline">\(\mathbb{X}\)</span> and <span class="math inline">\(\mathbb{Y}\)</span>.</p>
+</div>
+<p>By the non-commutative and non-associative property of ordered pairs, the
+Cartesian product is non-commutative and non-associative.
+However, they are isomorphic, i.e.,
+<span class="math inline">\(\mathbb{X} \times \mathbb{Y} \cong \mathbb{Y} \times \mathbb{X}\)</span>.</p>
+<p>A <em>tuple</em> is a generalization of order pairs which can consist of an
+arbitrary number of elements, e.g., <span class="math inline">\((x_1,x_2,\ldots,x_n)\)</span>.</p>
+<div class="definition">
+<p><span id="def:unlabeled-div-2" class="definition"><strong>Definition 1.2  </strong></span>The <span class="math inline">\(n\)</span>-fold Cartesian product of sets <span class="math inline">\(\mathbb{X_1},\ldots,\mathbb{X_n}\)</span> is
+given by
+<span class="math display">\[
+\mathbb{X_1} \times \cdots \times \mathbb{X_n} \coloneqq
+  \bigl\{(x_1,\ldots,x_n) : x_1 \in \mathbb{X_1} \land \cdots
+  \land x_n \in \mathbb{X_n}\bigr\}.
+\]</span></p>
+</div>
+<p>Note that
+<span class="math display">\[
+\mathbb{X_1} \times \mathbb{X_2} \times \mathbb{X_3} \cong
+  \mathbb{X_1} \times \left(\mathbb{X_2} \times \mathbb{X_3}\right) \cong
+  \left(\mathbb{X_1} \times \mathbb{X_2}\right) \times \mathbb{X_3},
+\]</span>
+thus we may implicitly convert between them without ambiguity.</p>
+<p>If each set in the <span class="math inline">\(n\)</span>-ary Cartesian product is the same, the power notation may
+be used, e.g., <span class="math inline">\(\mathbb{X}^3 \equiv \mathbb{X} \times \mathbb{X} \times \mathbb{X}\)</span>.
+As special cases, the <span class="math inline">\(0\)</span>-ary (nullary) Cartesian product is defined to be
+<span class="math inline">\(\{ \emptyset \}\)</span> and the <span class="math inline">\(1\)</span>-ary (unary) Cartesian product is the identity,
+e.g., <span class="math inline">\(\mathbb{X}^1 = \mathbb{X}\)</span>.</p>
+<div class="definition">
+<p><span id="def:unlabeled-div-3" class="definition"><strong>Definition 1.3  </strong></span>A one-to-one relation between <span class="math inline">\(\{0,1\}^m\)</span> and <span class="math inline">\(\{1,2,\ldots,2^m\}\)</span> is given
+by the equation
+<span class="math display">\[
+b_m \Longleftrightarrow \sum_{j=1}^{m} 2^{m - j + 1} b_j\,,
+\]</span>
+where <span class="math inline">\(b_m \in \{0,1\}^m\)</span>.
+We denote the transformation in either direction by the unary operation <span class="math inline">\(&#39;\)</span>,
+e.g., <span class="math inline">\(2&#39; = 0\)</span>.</p>
+</div>
+<p>We show some of the mappings in Table <a href="#tab:convert">1.1</a>.</p>
+<table>
+<caption><span id="tab:convert">Table 1.1: </span> A one-to-one relation between <span class="math inline">\(\{0,1\}^*\)</span> and <span class="math inline">\(\mathbb{N}\)</span>.</caption>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\mathbb{N}\)</span></th>
+<th><span class="math inline">\(\{0,1\}^*\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(\emptyset\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><span class="math inline">\(0_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><span class="math inline">\(1_2\)</span></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(00_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><span class="math inline">\(01_2\)</span></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><span class="math inline">\(10_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><span class="math inline">\(11_2\)</span></td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><span class="math inline">\(000_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td><span class="math inline">\(001_2\)</span></td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td><span class="math inline">\(010_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td><span class="math inline">\(011_2\)</span></td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td><span class="math inline">\(100_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td><span class="math inline">\(101_2\)</span></td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td><span class="math inline">\(110_2\)</span></td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td><span class="math inline">\(111_2\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>A <em>hash function</em> is given by the following definition.</p>
+<div class="definition">
+<p><span id="def:unlabeled-div-4" class="definition"><strong>Definition 1.4  </strong></span>Hash functions of type <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> are just total
+functions, normally with a finite codomain, with the weak assumption that they
+will be used as a device to assign elements from <span class="math inline">\(\mathbb{X}\)</span> a value from
+<span class="math inline">\(\mathbb{Y}\)</span> without requiring any particular rule.</p>
+</div>
+<p>For a given bit string <span class="math inline">\(x\)</span> and hash function <span class="math inline">\(\operatorname{hash}\)</span>,
+<span class="math inline">\(y = \operatorname{hash}(x)\)</span> is denoted the <em>hash</em> of <span class="math inline">\(x\)</span>.</p>
+<p>We are particularly interested in <em>perfect</em> hash functions as given by the
+following definition.</p>
+<p>::: {.definition name=“Perfect hash function”}
+A perfect hash function over the set <span class="math inline">\(\mathbb{A} \subseteq \mathbb{X}\)</span>, denoted
+by
+<span class="math display">\[
+    \operatorname{hash}_{\mathbb{A}} \colon \mathbb{X} \mapsto \mathbb{Y},
+\]</span>
+is an injective function when restricted to <span class="math inline">\(\mathbb{A}\)</span>.
+That is, there are no collisions among elements of <span class="math inline">\(\mathbb{A}\)</span>,
+<span class="math inline">\(\operatorname{hash}_{\mathbb{A}}(x) \neq \operatorname{hash}_{\mathbb{A}}(y)\)</span>
+for all <span class="math inline">\(x, y \in \mathbb{A}\)</span>, <span class="math inline">\(x \neq y\)</span>.
+\end{definition}
+Perfect hash functions are generally <em>surjective</em> when not restricted to
+the range of elements it perfectly hashes.</p>
+<p>The <em>load factor</em> is given by the following definition.</p>
+<div class="definition">
+<p><span id="def:unlabeled-div-5" class="definition"><strong>Definition 1.5  (Load factor) </strong></span>
+The proportion of hashes mapped to by
+<span class="math inline">\(\operatorname{hash}_{\mathbb{A}} \colon \mathbb{X} \mapsto \mathbb{N}\)</span> over
+subset <span class="math inline">\(\mathbb{A}\)</span> is denoted the load factor.
+Specifically, the load factor of <span class="math inline">\(\operatorname{hash}_{\mathbb{A}}\)</span> is a rational number given
+by
+<span class="math display">\[
+\frac{|\operatorname{hash}_{\mathbb{A}}(\mathbb{A})|}
+  {|{\operatorname{image}(\operatorname{hash}_{\mathbb{A}})}|}.
+\]</span></p>
+</div>
+<p>A <em>minimal</em> perfect hash has a load factor <span class="math inline">\(1\)</span>.</p>
+<p>A perfect hash function of type <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> over
+<span class="math inline">\(\mathbb{A}\)</span> with a load factor <span class="math inline">\(r\)</span> may be denoted by
+<span class="math inline">\(\operatorname{hash}_{\mathbb{A}}^{r}\)</span>.
+If <span class="math inline">\(m = |\{\mathbb{A}\}|\)</span> and we are interested in drawing attention to the
+cardinality of the perfect hash function, we may also denote it by
+<span class="math inline">\(\operatorname{hash}_{m}^{r}\)</span>.</p>
+<p>Every hash function in <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> is a perfect hash
+function over some subset of <span class="math inline">\(\mathbb{X}\)</span>, e.g., every hash function is
+trivially a perfect hash function of the empty set and singleton sets.</p>
+<p>Assuming <span class="math inline">\(\mathbb{X}\)</span> and <span class="math inline">\(\mathbb{Y}\)</span> are finite, the set of hash functions of
+type <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span>, which may also be denoted by
+<span class="math inline">\(\mathbb{Y}^{\mathbb{X}}\)</span>, has a cardinality
+<span class="math display">\[
+|{\mathbb{Y}}^{|\mathbb{X}|}|.
+\]</span>
+The set of perfect hash functions over <span class="math inline">\(\mathbb{A} \subseteq \mathbb{X}\)</span> is a
+subset of <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> with the predicate that no collisions
+may occur on any pair of elements in <span class="math inline">\(\mathbb{A}\)</span>.</p>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": null,
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection",
+"scroll_highlight": true
+},
+"extra_dependencies": ["amsmath", "mathtools"],
+"toolbar": {
+"position": "fixed"
+},
+"info": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
