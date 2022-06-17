@@ -1,11 +1,20 @@
-Perfect hash functions
-======================
+Algebraic hash functions
+========================
 
+Hash functions
+--------------
+
+We implement several hash functions, both cryptographic and
+non-cryptographic.
+
+We then provide a sort of an algebra over these hash functions,
+e.g., composing a hash function with certain types of functions
+results in other hash functions.
+
+Perfect hash functions
+----------------------
 Perfect hash functions may be used for memory efficient storage and
 fast retrieval of items from static sets, among other uses. 
-
-Description
------------
 
 We implement two data structures that model the concept of perfect hash
 functions.
@@ -15,9 +24,6 @@ However, construction can be very slow for larger sets.
 `phf_lvl2` provides much faster constructions at the
 cost of slightly slower queries and more in-place memory requirements.
 However, it is still quite fast and memory-efficient.
-
-Memory efficiency
------------------
 
 More gains in memory efficiency are readily possible by using in-place
 compression, e.g., in `phf`, the `l` value can be easily compressed since
