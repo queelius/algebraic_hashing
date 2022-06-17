@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <limits>
 #include <unordered_set>
+#include <chrono>
 
 namespace perfect_hashing
 {
@@ -36,17 +37,36 @@ namespace perfect_hashing
       return std::nextafter(0.0,1.0);
     }
 
+    static auto max_timeout()
+    {
+      return std::chrono::milliseconds::max().count();
+    }
+
     double r;
     H h;
     size_t lower_index;
     size_t upper_index;
     size_t m;
+    std::chrono::milliseconds duration;
 
     phf_lvl2_builder() :
       r(default_load_factor()),
       lower_index(min_index()),
       upper_index(max_index()),
-      m(0) {}
+      m(0),
+      duration(max_timeout()) {}
+
+    /**
+     * @brief Set the time-out, the length of time before setttling for the
+     *        best solution found.     * 
+     * 
+     * @param ms the time-out in milliseconds
+     */
+    auto & timeout(std::chrono::milliseconds ms)
+    {
+      duration = ms;
+      return *this;
+    }
 
     auto & num_buckets(size_t m = 0)
     {
@@ -120,7 +140,7 @@ namespace perfect_hashing
       std::vector<entry> B(m);            
       std::unordered_set<size_t> T;
       std::unordered_set<size_t> K;
-      std::vector<size_t> sigma(m,0);
+      std::vector<size_t> sigma(m,1);
 
       for (size_t i = 0; i < m; ++i)
         B[i].index = i;
@@ -132,15 +152,22 @@ namespace perfect_hashing
         [](auto const & b1, auto const & b2)
         { return b1.xs.size() > b2.xs.size(); });
 
+      auto const start_time = std::chrono::system_clock::now();
       for (size_t i = 0; i < m; ++i)
       {
+        auto const cur_time = std::chrono::system_clock::now();
+        auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+          cur_time - start_time);
+        if (elapsed > duration)
+          break;
+
         size_t l = 1;
         size_t j = 0;
 
         K.clear();
         while (j < B[i].xs.size())
         {
-          auto hash = (h(B[i].xs[j]) ^ l) % N;
+          auto const hash = h.mix(h(B[i].xs[j]),l) % N;
           if (T.count(hash) != 0 || K.count(hash) != 0)
             { ++l; j = 0; K.clear(); }
           else

@@ -33,7 +33,11 @@ namespace perfect_hashing
          */
 
         template <typename X>
-        auto operator()(X const & x) { return (h(x) ^ l) % N; }
+        auto operator()(X const & x)
+        {
+            //return (h(x) ^ l) % N;
+            return h.mix(h(x),l) % N;
+        }
 
         /**
          * @brief retrieves the maximum hash value

@@ -245,22 +245,22 @@ will be used as a device to assign elements from <span class="math inline">\(\ma
 <span class="math inline">\(y = \operatorname{hash}(x)\)</span> is denoted the <em>hash</em> of <span class="math inline">\(x\)</span>.</p>
 <p>We are particularly interested in <em>perfect</em> hash functions as given by the
 following definition.</p>
-<p>::: {.definition name=“Perfect hash function”}
-A perfect hash function over the set <span class="math inline">\(\mathbb{A} \subseteq \mathbb{X}\)</span>, denoted
+<div class="definition">
+<p><span id="def:unlabeled-div-5" class="definition"><strong>Definition 1.5  </strong></span>A perfect hash function over the set <span class="math inline">\(\mathbb{A} \subseteq \mathbb{X}\)</span>, denoted
 by
 <span class="math display">\[
-    \operatorname{hash}_{\mathbb{A}} \colon \mathbb{X} \mapsto \mathbb{Y},
+\operatorname{hash}_{\mathbb{A}} \colon \mathbb{X} \mapsto \mathbb{Y},
 \]</span>
 is an injective function when restricted to <span class="math inline">\(\mathbb{A}\)</span>.
 That is, there are no collisions among elements of <span class="math inline">\(\mathbb{A}\)</span>,
 <span class="math inline">\(\operatorname{hash}_{\mathbb{A}}(x) \neq \operatorname{hash}_{\mathbb{A}}(y)\)</span>
-for all <span class="math inline">\(x, y \in \mathbb{A}\)</span>, <span class="math inline">\(x \neq y\)</span>.
-\end{definition}
-Perfect hash functions are generally <em>surjective</em> when not restricted to
+for all <span class="math inline">\(x, y \in \mathbb{A}\)</span>, <span class="math inline">\(x \neq y\)</span>.</p>
+</div>
+<p>Perfect hash functions are generally <em>surjective</em> when not restricted to
 the range of elements it perfectly hashes.</p>
 <p>The <em>load factor</em> is given by the following definition.</p>
 <div class="definition">
-<p><span id="def:unlabeled-div-5" class="definition"><strong>Definition 1.5  (Load factor) </strong></span>
+<p><span id="def:unlabeled-div-6" class="definition"><strong>Definition 1.6  (Load factor) </strong></span>
 The proportion of hashes mapped to by
 <span class="math inline">\(\operatorname{hash}_{\mathbb{A}} \colon \mathbb{X} \mapsto \mathbb{N}\)</span> over
 subset <span class="math inline">\(\mathbb{A}\)</span> is denoted the load factor.
@@ -278,6 +278,12 @@ by
 If <span class="math inline">\(m = |\{\mathbb{A}\}|\)</span> and we are interested in drawing attention to the
 cardinality of the perfect hash function, we may also denote it by
 <span class="math inline">\(\operatorname{hash}_{m}^{r}\)</span>.</p>
+<div class="figure"><span style="display:block;" id="fig:ho-plot"></span>
+<img src="img/pf.tex" alt="This is a figure caption." width="70%" />
+<p class="caption">
+Figure 1.1: This is a figure caption.
+</p>
+</div>
 <p>Every hash function in <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> is a perfect hash
 function over some subset of <span class="math inline">\(\mathbb{X}\)</span>, e.g., every hash function is
 trivially a perfect hash function of the empty set and singleton sets.</p>
@@ -285,7 +291,7 @@ trivially a perfect hash function of the empty set and singleton sets.</p>
 type <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span>, which may also be denoted by
 <span class="math inline">\(\mathbb{Y}^{\mathbb{X}}\)</span>, has a cardinality
 <span class="math display">\[
-|{\mathbb{Y}}^{|\mathbb{X}|}|.
+|{\mathbb{Y}}|^{|\mathbb{X}|}.
 \]</span>
 The set of perfect hash functions over <span class="math inline">\(\mathbb{A} \subseteq \mathbb{X}\)</span> is a
 subset of <span class="math inline">\(\mathbb{X} \mapsto \mathbb{Y}\)</span> with the predicate that no collisions
@@ -343,7 +349,6 @@ gitbook.start({
 "collapse": "subsection",
 "scroll_highlight": true
 },
-"extra_dependencies": ["amsmath", "mathtools"],
 "toolbar": {
 "position": "fixed"
 },

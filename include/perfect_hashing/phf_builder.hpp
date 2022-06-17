@@ -81,6 +81,12 @@ namespace perfect_hashing
       return *this;
     }
 
+    /**
+     * @brief Set the time-out, the length of time before setttling for the
+     *        best solution found.     * 
+     * 
+     * @param ms the time-out in milliseconds
+     */
     auto & timeout(std::chrono::milliseconds ms)
     {
       duration = ms;
@@ -148,7 +154,7 @@ namespace perfect_hashing
           size_t collides = 0;
           for (auto x = begin; x != end; ++x)
           {
-            auto hash = (h(*x) ^ l) % N;
+            auto const hash = h.mix(h(*x),l) % N;
             if (K[hash])
             {
               if (++collides > collides_star)

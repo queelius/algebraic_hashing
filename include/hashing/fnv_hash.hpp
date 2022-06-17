@@ -196,6 +196,14 @@ namespace hashing
         using hash_type = size_t;
 
         template <typename X>
+        auto mix(size_t h, X x) const
+        {
+            h ^= operator()(x);
+            h *= details::fnv_params::prime;
+            return h;
+        }
+
+        template <typename X>
         auto operator()(X const & x) const
         {
             return details::fnv_hash(x);

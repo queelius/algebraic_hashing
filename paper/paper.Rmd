@@ -42,7 +42,7 @@ output:
         all: ['facebook', 'twitter', 'linkedin', 'weibo', 'instapaper']
       info: true
 always_allow_html: yes
-documentclass: book
+documentclass: article
 ---
 
 ```{r, include = FALSE}

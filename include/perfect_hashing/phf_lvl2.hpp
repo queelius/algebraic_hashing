@@ -24,7 +24,8 @@ namespace perfect_hashing
         template <typename X> // X is hashable by H
         auto operator()(X const & x) const
         {
-            return (h(x) ^ sigma[h(x) % m]) % N;
+            return h.mix(h(x),sigma[h(x) % m]) % N;
+            //return (h(x) ^ sigma[h(x) % m]) % N;
         }
 
         size_t const N;
