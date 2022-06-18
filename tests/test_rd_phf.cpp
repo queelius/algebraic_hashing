@@ -1,6 +1,6 @@
-#include <perfect_hashing/phf_builder.hpp>
+#include <perfect_hashing/rd_phf_builder.hpp>
 #include <hashing/fnv_hash.hpp>
-#include <perfect_hashing/phf.hpp>
+#include <perfect_hashing/rd_phf.hpp>
 #include <vector>
 #include <iostream>
 #include <unordered_set>
@@ -16,12 +16,12 @@ int main()
 
 void test_phf()
 {
-    auto xs = random_strings(1000,30,10001);
+    auto xs = random_strings(10000,20,21001);
     auto start = std::chrono::system_clock::now();
 
-    auto ph = perfect_hashing::phf_builder<hashing::fnv_hash>().
-        load_factor(.15).
-        timeout(std::chrono::seconds(10)).
+    auto ph = perfect_hashing::rd_phf_builder<hashing::fnv_hash>().
+        load_factor(.1).
+        timeout(std::chrono::seconds(30)).
         index(0,20000000)(xs);
 
     auto end = std::chrono::system_clock::now();
@@ -30,12 +30,12 @@ void test_phf()
     std::cout << (double)elapsed.count() / 1000 << '\n';
     std::cout << "error rate = " << ph.error_rate() * 100 << "%\n";
 
-    std::unordered_set<size_t> hashes;
-    for (auto x : xs)
-    {
-        auto h = ph(x);
-        if (hashes.count(h) != 0)
-            std::cout << "collision: ph(" << x << ") = " << h << "\n";
-        hashes.insert(h);
-    }
+    //std::unordered_set<size_t> hashes;
+    //for (auto x : xs)
+    //{
+        //auto h = ph(x);
+        //if (hashes.count(h) != 0)
+        //    std::cout << "collision: ph(" << x << ") = " << h << "\n";
+        //hashes.insert(h);
+    //}
 }

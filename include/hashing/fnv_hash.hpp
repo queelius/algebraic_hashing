@@ -1,18 +1,13 @@
-/**
- * fnv_hash models a non-cryptographic hash function of the type
- * 
- *     Hashable -> size_t.
- */
-
 #pragma once
 
-#include <limits.h>
+#include <climits>
 #include <vector>
 #include <cstring>
 #include <variant>
 #include <optional>
 #include <tuple>
 #include <string>
+#include <compare>
 namespace hashing
 {
     namespace details
@@ -25,10 +20,7 @@ namespace hashing
 
         auto fnv_hash(char x)
         {
-            auto h = fnv_params::offset_basis;
-            h ^= x;
-            h *= fnv_params::prime;
-            return h;
+            return (fnv_params::offset_basis ^ x) * fnv_params::prime;
         }
 
         template <typename T>
@@ -191,16 +183,27 @@ namespace hashing
 
     }    
     
+    /**
+     * fnv_hash models a non-cryptographic hash function of the type
+     * 
+     *     Hashable -> size_t.
+     */
     struct fnv_hash
     {
         using hash_type = size_t;
 
+        /**
+         * @brief update a hash value with more values
+         * 
+         * @tparam X value type to hash
+         * @param h the existing hash
+         * @param x the value type to update h with
+         * @return auto 
+         */
         template <typename X>
-        auto mix(size_t h, X x) const
+        static auto mix(size_t h, X x)
         {
-            h ^= operator()(x);
-            h *= details::fnv_params::prime;
-            return h;
+            return (h ^ details::fnv_hash(x)) * details::fnv_params::prime;
         }
 
         template <typename X>
@@ -208,5 +211,9 @@ namespace hashing
         {
             return details::fnv_hash(x);
         }
+
+        auto operator<=>(fnv_hash const &) const = default;        
     };
+
+    constexpr bool is_eq(fnv_hash const &, fnv_hash const &) { return true; }
 }

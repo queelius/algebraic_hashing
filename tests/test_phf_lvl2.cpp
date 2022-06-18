@@ -22,7 +22,7 @@ void test_phf_lvl2()
 
     auto start = std::chrono::system_clock::now();
     auto ph = perfect_hashing::phf_lvl2_builder<hashing::fnv_hash>().
-        load_factor(.81).timeout(std::chrono::seconds(5))(xs);
+        load_factor(.7).timeout(std::chrono::seconds(10))(xs);
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
 

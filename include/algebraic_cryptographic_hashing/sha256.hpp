@@ -2,7 +2,6 @@
 
 #include <string>
 #include <cstring>
-#include <fstream>
 #include <cstdint>
 
 namespace algebraic_cryptographic_hashes
@@ -28,6 +27,7 @@ namespace algebraic_cryptographic_hashes
     private:
 
         static const unsigned int DIGEST_SIZE = (256 / 8);
+        static const unsigned int HEX_DIGEST_SIZE = 2*DIGEST_SIZE+1;
         static const uint32_t sha256_k[];
         static const unsigned int SHA_256_BLOCK_SIZE = (512 / 8);
 
@@ -208,37 +208,51 @@ namespace algebraic_cryptographic_hashes
         }
     }
 
-    template <unsigned int N>
-    auto hexdigest(std::string const & x)
+    void sha256_digest(unsigned char * in, size_t size, unsigned char out[SHA256::DIGEST_SIZE])
+    {
+        auto ctx = SHA256();
+        ctx.init();
+        ctx.update(in,size);
+        ctx.final(out);
+    }
+
+    auto sha256_digest(std::string const & x)
     {
         unsigned char digest[SHA256::DIGEST_SIZE];
-        SHA256 ctx = SHA256();
-        ctx.init();
-        ctx.update((unsigned char*)x.c_str(), x.size());
-        ctx.final(digest);
+        sha256_digest(x.c_str(), x.length(), digest);
+        return std::string(digest);
+    }
 
-        char buf[N+1]; buf[N] = 0;
-        for (unsigned int i = 0; i < N; i++)
+    template <typename X>
+    auto sha256_digest(X const & x, unsigned char out[SHA256::DIGEST_SIZE])
+    {
+        auto ctx = SHA256();
+        ctx.init();
+        auto bytes = serialize(x);
+        for (auto byte : bytes)
         {
-            sprintf(buf + i, "%x", digest[i] % 16);
+            auto bytes = (unsigned char*)x;
+            ctx.update(byte,1);
         }
+        ctx.final(out);
+    }
+
+    auto sha256_hexdigest(std::string const & x)
+    {
+        unsigned char digest[SHA256::DIGEST_SIZE];
+        sha256_digest(x.c_str(), x.length(), digest);
+
+        char buf[SHA256::HEX_DIGEST_SIZE];
+        for (int i = 0; i < SHA256::DIGEST_SIZE; i++)
+            sprintf(buf + i * 2, "%02x", digest[i]);
+        buf[SHA256::HEX_DIGEST_SIZE] = 0;
         return std::string(buf);
     }
 
-    auto sha256(std::string const & x)
-    {
-        unsigned char digest[SHA256::DIGEST_SIZE];
-        SHA256 ctx = SHA256();
-        ctx.init();
-        ctx.update( (unsigned char*)x.c_str(), x.length());
-        ctx.final(digest);
 
-        char buf[2 * SHA256::DIGEST_SIZE + 1];
-        buf[2 * SHA256::DIGEST_SIZE] = 0;
-        for (int i = 0; i < SHA256::DIGEST_SIZE; i++)
-        {
-            sprintf(buf + i * 2, "%02x", digest[i]);
-        }
-        return std::string(buf);
+
+    struct sha256_hash
+    {
+        
     }
 }

@@ -1,9 +1,13 @@
+#include <algebraic_cryptographic_hashing/cryptographic_hash.hpp>
+
 /**
  * A cryptographic hash generator G must provide overloads of the types
  *     G : () -> Hash,
  *     update : G & -> unsigned char * -> G::size_type -> G &,
  * and
  *     entropy : G const & -> Number.
+ * where Hash models the concept of a hash value corresponding to the state of
+ * the generator G.
  * 
  * Since G is a hash generator, it accepts zero or more byte sequences using
  * the update procedure and may be invoked as a function to generate the hash
@@ -15,10 +19,6 @@
  * Rather than giving it the entire ByteSequence at once, we allow the
  * programmer to feed it byte sequences, one after the other, until there are
  * no more left. In other words, it is an online algorithm.
- * 
- *     G : () -> Hash
- * where Hash models the concept of a hash value corresponding to the state of
- * the generator G.
  * 
  * The hash of the byte sequences x1,x2,...,xn is given by
  *     G.update(x1).update(x2)...(xn)().
@@ -42,7 +42,7 @@
  * injective, T -> (unsigned char*, G::size_type), then the probability that
  * two non-identical objects of type T collide is given by
  * 
- *     2^-G::entropy()
+ *     2^(-G::entropy())
  * 
  * where G::entropy() is the Shannnon entropy of G. Generally, G::entropy()
  * is only an estimate, and may change over time. The maximum entropy is given
@@ -70,7 +70,6 @@
  * {T1,...,Tm}, then the mapping function is also a function of the type.
  */
 
-#include "cryptographic_hash.hpp"
 
 // type-erasure over concrete types that model cryptographic hash generators.
 // It assumes the output hash of the erased type has a function

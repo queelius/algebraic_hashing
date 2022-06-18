@@ -6,7 +6,7 @@
 namespace perfect_hashing
 {
     /**
-     * chd_phf models a hash function in the family
+     * phf_lvl2 models a hash function in the family
      *     Hashable(H) -> size_t
      * where Hashable(H) is any value type that is hashable by H.
      */
@@ -24,8 +24,7 @@ namespace perfect_hashing
         template <typename X> // X is hashable by H
         auto operator()(X const & x) const
         {
-            return h.mix(h(x),sigma[h(x) % m]) % N;
-            //return (h(x) ^ sigma[h(x) % m]) % N;
+            return h.mix(sigma[h(x) % m], x) % N;
         }
 
         size_t const N;

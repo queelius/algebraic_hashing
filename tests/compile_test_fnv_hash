@@ -1,0 +1,2 @@
+#!/bin/sh
+g++ -std=c++20 -o test_fnv_hash test_fnv_hash.cpp -I ~/sources/algebraic_hash_functions/include

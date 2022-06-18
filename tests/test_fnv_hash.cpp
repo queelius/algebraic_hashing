@@ -16,6 +16,14 @@ int main()
         std::cout << h(std::optional<std::string>{xs[i]}) << "\n";
         std::cout << h(std::variant<std::string,int>{xs[i]}) << "\n";
         std::cout << h(std::variant<std::string,int>{ys[i]}) << "\n";
+        std::cout << "======================================\n";
     }
-    
+
+    hashing::fnv_hash h2;
+    std::cout << "(h == h2): " << (h == h2) << "\n";
+    std::cout << "(h != h2): " << (h != h2) << "\n";
+    std::cout << "(h < h2): " << (h < h2) << "\n";
+    std::cout << "(h > h2): " << (h > h2) << "\n";
+    std::cout << "(h <= h2): " << (h <= h2) << "\n";
+    std::cout << "(h >= h2): " << (h >= h2) << "\n";
 }

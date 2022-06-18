@@ -1,6 +1,6 @@
 #pragma once
 
-#include "phf.hpp"
+#include "rd_phf.hpp"
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -8,11 +8,12 @@
 #include <algorithm>
 #include <limits>
 #include <chrono>
+#include <iostream>
 
 namespace perfect_hashing
 {
   template <typename H>
-  struct phf_builder
+  struct rd_phf_builder
   {
     static auto max_index()
     {
@@ -26,7 +27,7 @@ namespace perfect_hashing
 
     static auto default_load_factor()
     {
-      return 0.5;
+      return 0.1;
     }
 
     static auto max_load_factor()
@@ -49,6 +50,8 @@ namespace perfect_hashing
       return std::chrono::milliseconds::max().count();
     }
 
+    bool debug;
+    std::ostream & debug_out;
     double r;
     H h;
     size_t lower_index;
@@ -56,12 +59,34 @@ namespace perfect_hashing
     size_t num_threads;
     std::chrono::milliseconds duration;
 
-    phf_builder() :
+    rd_phf_builder() :
+      debug(false),
+      debug_out(std::cout),
       r(default_load_factor()),
       lower_index(min_index()),
       upper_index(max_index()),
       duration(max_timeout()),
       num_threads(default_threads()) {}
+
+    /**
+     * @brief Set debug mode to true or false.
+     * @param mode if mode is true, then show debugging information.
+     */
+    auto & debugging(bool mode = true)
+    {
+      debug = mode;
+      return *this;
+    }    
+    
+    /**
+     * @brief Set debug output.
+     * @param out the debugging output stream.
+     */
+    auto & debug_output(std::ostream & out)
+    {
+      debug_out = out;
+      return *this;
+    }
 
     auto & threads(size_t n = 0)
     {
@@ -190,7 +215,7 @@ namespace perfect_hashing
       for (auto & t : threads)
         t.join();
       
-      return phf<H>(N,h,l_star,1.0-(double)(succ_star)/m);
+      return rd_phf<H>(N,h,l_star,1.0-(double)(succ_star)/m);
     }
 
     template <typename X>

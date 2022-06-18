@@ -24,7 +24,7 @@ namespace perfect_hashing
 
     static auto default_load_factor()
     {
-      return 0.8;
+      return 0.5;
     }
 
     static auto max_load_factor()
@@ -42,6 +42,8 @@ namespace perfect_hashing
       return std::chrono::milliseconds::max().count();
     }
 
+    bool debug;
+    std::ostream & debug_out;
     double r;
     H h;
     size_t lower_index;
@@ -57,6 +59,26 @@ namespace perfect_hashing
       duration(max_timeout()) {}
 
     /**
+     * @brief Set debug mode to true or false.
+     * @param mode if mode is true, then show debugging information.
+     */
+    auto & debugging(bool mode = true)
+    {
+      debug = mode;
+      return *this;
+    }    
+    
+    /**
+     * @brief Set debug output.
+     * @param out the debugging output stream.
+     */
+    auto & debug_output(std::ostream & out)
+    {
+      debug_out = out;
+      return *this;
+    }
+
+    /**
      * @brief Set the time-out, the length of time before setttling for the
      *        best solution found.     * 
      * 
@@ -68,6 +90,12 @@ namespace perfect_hashing
       return *this;
     }
 
+    /**
+     * @brief Set the number of level 2 buckets (bins).
+     * 
+     * @param m number of buckets (bins). if 0, then automatically sets it to
+     *          some "good" value.
+     */
     auto & num_buckets(size_t m = 0)
     {
       this->m = m;
