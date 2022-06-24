@@ -4,11 +4,7 @@
  *
  *     Hashable -> H
  *
- * where H has overloads for
- *
- *     ^= : (H&,H) -> H
- * and
- *     *= : (H*,H) -> H.
+ * where H has overloads for {^=, *=}.
  *
  * Only two operations are required, which means a barebones
  * concrete type that satisfies the concept may be constructed.
@@ -40,8 +36,29 @@ namespace hashing::generic
     template <>
     struct fnv_params<uint64_t>
     {
-        static uint64_t const prime = 1099511628211ul;
-        static uint64_t const offset_basis = 14695981039346656037ul;
+        constexpr uint64_t const prime = 1099511628211ul;
+        constexpr uint64_t const offset_basis = 14695981039346656037ul;
+    };
+
+    template <>
+    struct fnv_params<uint32_t>
+    {
+        constexpr uint32_t const prime = 16777619ul;
+        constexpr uint32_t const offset_basis = 2166136261ul;
+    };
+
+    template <>
+    struct fnv_params<mod<128>>>
+    {
+        constexpr auto const prime = mod<128>("309485009821345068724781371");
+        constexpr auto const offset_basis = mod<128>("144066263297769815596495629667062367629");
+    };
+
+    template <>
+    struct fnv_params<mod<256>>>
+    {
+        constexpr auto const prime = mod<256>("374144419156711147060143317175368453031918731002211");
+        constexpr auto const offset_basis = mod<256>("100029257958052580907070968620625704837092796014241193945225284501741471925557");
     };
 
     namespace details

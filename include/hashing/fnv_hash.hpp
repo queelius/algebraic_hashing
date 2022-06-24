@@ -8,6 +8,7 @@
 #include <tuple>
 #include <string>
 #include <compare>
+
 namespace hashing
 {
     namespace details
@@ -193,17 +194,29 @@ namespace hashing
         using hash_type = size_t;
 
         /**
+         * @brief retrieves the maximum hash value
+         */
+        static auto max() { return std::numeric_limits<size_t>::max(); }
+
+        /**
+         * @brief retrieves the minimum hash value
+         */
+        static auto min() { return std::numeric_limits<size_t>::max(); }
+
+        /**
          * @brief update a hash value with more values
-         * 
+         *
          * @tparam X value type to hash
          * @param h the existing hash
-         * @param x the value type to update h with
-         * @return auto 
+         * @param x the value type to update (mix) h with
          */
         template <typename X>
         static auto mix(size_t h, X x)
         {
-            return (h ^ details::fnv_hash(x)) * details::fnv_params::prime;
+            h ^= details::fnv_hash(x);
+            h *= details::fnv_params::prime;
+            return h;
+//            return (h ^ details::fnv_hash(x)) * details::fnv_params::prime;
         }
 
         template <typename X>
@@ -212,7 +225,7 @@ namespace hashing
             return details::fnv_hash(x);
         }
 
-        auto operator<=>(fnv_hash const &) const = default;        
+        auto operator<=>(fnv_hash const &) const = default;
     };
 
     constexpr bool is_eq(fnv_hash const &, fnv_hash const &) { return true; }
