@@ -10,7 +10,7 @@
 #include <chrono>
 #include <iostream>
 
-namespace perfect_hashing
+namespace algebraic_hashing::perfect_hashing
 {
   template <typename H>
   struct rd_phf_builder
@@ -152,16 +152,15 @@ namespace perfect_hashing
      * @param end end of range
      */
     template <typename I>
-    auto operator()(I begin, I end)
+    auto build(I begin, I end)
     {
       std::sort(begin,end);
       end = std::unique(begin,end);
       auto m = std::distance(begin,end);
       auto N = (size_t)std::ceil(m/r);
 
-      size_t l_star;
-      size_t succ_star = 0;
-      size_t collides_star = 0;
+      size_t l0;
+      size_t coll0 = m;
       std::mutex lck;
       auto const start_time = std::chrono::system_clock::now();
 
@@ -170,40 +169,33 @@ namespace perfect_hashing
         std::vector<bool> K(N);
         for (auto l = start; l != stop; ++l)
         {
+          K.assign(N,false);
           auto const cur_time = std::chrono::system_clock::now();
-          auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-            cur_time - start_time);
-          if (succ_star == m || elapsed > duration)
+          auto const elapsed = std::chrono::duration_cast<
+          std::chrono::milliseconds>(cur_time - start_time);
+          if (coll0 == 0 || elapsed > duration)
             break;
-          size_t succ = 0;
-          size_t collides = 0;
+          size_t coll = 0;
           for (auto x = begin; x != end; ++x)
           {
-            auto const hash = h.mix(h(*x),l) % N;
+            auto const hash = h.mix(l,*x) % N;
             if (K[hash])
-            {
-              if (++collides > collides_star)
-                break;
-            }
-            else
-            {
-              ++succ;
-              K[hash] = true;
-            }
+              if (++coll >= coll0) break;
+            K[hash] = true;
           }
 
-          if (succ > succ_star)
+          if (coll < coll0)
           {
             lck.lock();
-            if (succ > succ_star)
+            if (coll < coll0)
             {
-              l_star = l;
-              succ_star = succ;
-              collides_star = collides;
+              std::cout << "l0 = " << l0 << "\n";
+              l0 = l;
+              std::cout << "coll0 = " << coll0 << "\n";
+              coll0 = coll;
             }
             lck.unlock();
           }
-          K.assign(N,false);
         }
       };
 
@@ -215,7 +207,45 @@ namespace perfect_hashing
       for (auto & t : threads)
         t.join();
       
-      return rd_phf<H>(N,h,l_star,1.0-(double)(succ_star)/m);
+      return rd_phf<H>(N,l0,(double)(coll0)/m,h);
+    }
+
+    template <typename I>
+    auto operator()(I begin, I end)
+    {
+      std::sort(begin,end);
+      end = std::unique(begin,end);
+      auto m = std::distance(begin,end);
+      auto N = (size_t)std::ceil(m/r);
+
+      size_t l0 = 0;
+      size_t coll0 = m;
+      auto const start_time = std::chrono::system_clock::now();
+
+      std::vector<bool> K(N,false);
+      for (auto l = lower_index; l != upper_index; ++l)
+      {
+        auto const cur_time = std::chrono::system_clock::now();
+        auto const elapsed = std::chrono::duration_cast<
+          std::chrono::milliseconds>(cur_time - start_time);
+        if (coll0 == 0 || elapsed > duration)
+          break;
+        size_t coll = 0;
+        for (auto x = begin; x != end; ++x)
+        {
+          auto const hash = h.mix(l,*x) % N;
+          if (K[hash] && ++coll >= coll0) break;
+          K[hash] = true;
+        }
+
+        if (coll < coll0)
+        {
+            l0 = l;
+            coll0 = coll;
+        }
+        K.assign(N,false);
+      }
+      return rd_phf<H>(N,l0,(double)(coll0)/m,h);
     }
 
     template <typename X>

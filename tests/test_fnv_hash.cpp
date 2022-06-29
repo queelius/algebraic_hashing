@@ -27,3 +27,21 @@ int main()
     std::cout << "(h <= h2): " << (h <= h2) << "\n";
     std::cout << "(h >= h2): " << (h >= h2) << "\n";
 }
+
+
+
+void test_fnv_collisions()
+{
+    std::unordered_set<size_t> hs;
+    hashing::fnv_hash h;
+    for (size_t i = 0; ; ++i)
+    {
+        auto hash = h(i);
+        if (i % 1000000 == 0) std::cout << "i=" << i << " => hash=" << hash << "\n";
+        if (hs.count(hash) != 0)
+        {
+            std::cout << "Collision at i=" << i << " with hash=" << hash << "\n";
+        }
+        hs.insert(hash);
+    }
+}

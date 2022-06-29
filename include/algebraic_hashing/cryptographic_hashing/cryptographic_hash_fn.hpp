@@ -1,4 +1,4 @@
-#include <algebraic_cryptographic_hashing/cryptographic_hash.hpp>
+#include "cryptographic_hash.hpp"
 
 /**
  * A cryptographic hash generator G must provide overloads of the types
@@ -70,107 +70,106 @@
  * {T1,...,Tm}, then the mapping function is also a function of the type.
  */
 
-
-// type-erasure over concrete types that model cryptographic hash generators.
-// It assumes the output hash of the erased type has a function
-//     hexadecimal : Hash -> string
-// and thus cryptographic_hash_generator is a hash generator type that
-// models
-//     unsigned char* -> size_type -> cryptographic_hash
-//
-// 
-class cryptographic_hash_generator
+namespace algebraic_hashing::cryptographic_hashing
 {
-public:
-    using size_type = size_t;
-
-    auto & update(unsigned char * input, size_type n)
+    // type-erasure over concrete types that model cryptographic hash functions.
+    // It assumes the output hash of the erased type has a function
+    //     hexadecimal : Hash -> string
+    // and thus cryptographic_hash_fn is a hash generator type that
+    // models
+    //     unsigned char* -> size_type -> cryptographic_hash
+    class cryptographic_hash_fn
     {
-        concept_->update(input,n);
-        return *this;
-    }
+    public:
+        using size_type = size_t;
 
-    cryptographic_hash operator()() const
-    {
-        return concept_->generate();
-    }
+        auto & update(unsigned char * input, size_type n)
+        {
+            concept_->update(input,n);
+            return *this;
+        }
 
-    // The Shannon entropy of the hash generator.
-    //
-    // The maximum entropy of a cryptographic hash function of type
-    //     {0,1}^* -> {0,1}^128
-    // has 128 bits of entropy, so the md5 algorithm is reasonably close to
-    // obtaining this ideal with an estimated 127.3 bits of entropy.
-    //
-    // Given a hash h(x), the expected number of trials needed to find an object
-    // y s.t. hash(y) = hash(x) is given by
-    //     2^(entropy()-1).
-    auto entropy() const { return concept_->entropy(); }
+        cryptographic_hash operator()() const
+        {
+            return concept_->generate();
+        }
 
-    cryptographic_hash_generator(cryptographic_hash_generator const & copy) :
-        concept_(copy.concept_->clone()) {}
+        // The Shannon entropy of the hash generator.
+        //
+        // The maximum entropy of a cryptographic hash function of type
+        //     {0,1}^* -> {0,1}^128
+        // has 128 bits of entropy, so the md5 algorithm is reasonably close to
+        // obtaining this ideal with an estimated 127.3 bits of entropy.
+        //
+        // Given a hash h(x), the expected number of trials needed to find an object
+        // y s.t. hash(y) = hash(x) is given by
+        //     2^(entropy()-1).
+        auto entropy() const { return concept_->entropy(); }
 
-    template <typename G>
-    cryptographic_hash_generator(G const & g) :
-        concept_(new model<G>{g}) {}
+        cryptographic_hash_fn(cryptographic_hash_fn const & copy) :
+            concept_(copy.concept_->clone()) {}
 
-private:
-    struct concept
-    {
-        virtual void update(unsigned char * input, size_type n) = 0;
-        virtual cryptographic_hash generate() const = 0;
-        virtual double entropy() const = 0;
-        virtual concept * clone() const = 0;
+        template <typename G>
+        cryptographic_hash_fn(G const & g) :
+            concept_(new model<G>{g}) {}
+
+    private:
+        struct hash_fn_concept
+        {
+            virtual void update(unsigned char * input, size_type n) = 0;
+            virtual cryptographic_hash generate() const = 0;
+            virtual double entropy() const = 0;
+            virtual hash_fn_concept * clone() const = 0;
+        };
+
+        std::unique_ptr<hash_fn_concept> concept_;
+
+        template <typename G>
+        struct hash_fn_model final : hash_fn_concept
+        {
+            G g;
+
+            std::string generate() const override { return hexadecimal(g()); }
+            concept * clone() const { return std::unique_ptr<concept>{new G(g)}; }
+            double entropy() const override { return static_cast<double>(entropy(g)); }
+            void update(unsigned char * input, size_type n) override { G.update(input,n); }
+        };
     };
 
-    std::unique_ptr<concept> concept_;
+    template <typename G>
+    auto entropy(G const & g)
+    {
+        return g.entropy();
+    }
 
     template <typename G>
-    struct model final : concept
+    G & update(
+        G & g,
+        unsigned char const * bytes,
+        typename G::size_type n)
     {
-        G g;
+        return g.update(bytes, n);
+    }
 
-        std::string generate() const override { return hexadecimal(g()); }
-        concept * clone() const { return std::unique_ptr<concept>{new G(g)}; }
-        double entropy() const override { return static_cast<double>(entropy(g)); }
-        void update(unsigned char * input, size_type n) override { G.update(input,n); }
-    };
-}
+    template <typename G>
+    G & update(
+        G & g,
+        char const * input,
+        typename G::size_type n)
+    {
+        return update(g, (unsigned char const *)input, n);
+    }
 
-
-template <typename G>
-auto entropy(G const & g)
-{
-    return g.entropy();
-}
-
-template <typename G>
-G & update(
-    G & g,
-    unsigned char const * bytes,
-    typename G::size_type n)
-{
-    return g.update(bytes, n);
-}
-
-template <typename G>
-G & update(
-    G & g,
-    char const * input,
-    typename G::size_type n)
-{
-    return update(g, (unsigned char const *)input, n);
-}
-
-// I models an input iterator (single-pass forward iterator)
-// G models a cryptographic hash function generator
-template <typename I, typename G>
-G & update(
-    G & g,
-    I begin,
-    I end)
-{
-    for (auto x = begin; x != end; ++x)
-        return update(g, value(*x), n);
-    return g;
+    // I models an input iterator (single-pass forward iterator)
+    // G models a cryptographic hash function generator
+    template <typename I, typename G>
+    G & update(
+        G & g,
+        I begin,
+        I end)
+    {
+        for (auto x = begin; x != end; ++x)
+            return update(g, value(*x), n);
+        return g;
+    }
 }

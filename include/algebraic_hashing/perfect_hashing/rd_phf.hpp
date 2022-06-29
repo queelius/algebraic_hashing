@@ -2,10 +2,10 @@
 
 #include <cmath>
 
-namespace perfect_hashing
+namespace algebraic_hashing::perfect_hashing
 {
     /**
-     * @brief Models the concept of a *rate-distorted* perfect hash function.
+     * @brief Models the concept of a rate-distorted perfect hash function.
      *
      * rd_phf<H> models a perfect hash function of type
      *     Hashable(H) -> size_t
@@ -23,20 +23,16 @@ namespace perfect_hashing
 
         rd_phf(rd_phf const &) = default;
         rd_phf(rd_phf &&) = default;
-        rd_phf(size_t N, H h, size_t l, double err) :
-            N(N), h(h), l(l), err(err) {}
+        rd_phf(size_t N, size_t l0, double err, H h) :
+            N(N), l0(l0), err(err), h(h) {}
 
         /**
          * @brief retrieves the minimum hash value
          * @tparam X the element type, must be hashable by H.
          * @param x the element to retrieve the hash of.
          */
-
         template <typename X>
-        auto operator()(X const & x)
-        {
-            return h.mix(l,x) % N;
-        }
+        auto operator()(X const & x) { return h.mix(l0,x) % N; }
 
         /**
          * @brief retrieves the maximum hash value
@@ -63,10 +59,9 @@ namespace perfect_hashing
 
         auto operator<=>(rd_phf const &) const = default;
 
-        size_t const N;
-        H const h;
-        size_t const l;
+        size_t const N, l0;
         double const err;
+        H const h;
     };
 
     template <typename H>
@@ -74,8 +69,8 @@ namespace perfect_hashing
                          rd_phf<H> const & rhs)
     {
         return lhs.N == rhs.N &&
-               lhs.h == rhs.h &&
                lhs.l == rhs.l &&
-               lhs.err == rhs.err;
+               lhs.err == rhs.err &&
+               lhs.h == rhs.h;
     }
 }

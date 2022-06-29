@@ -1,0 +1,2 @@
+#!/bin/sh
+g++ -std=c++20 -o test_proracle2 test_proracle.cpp -I ~/sources/algebraic_hash_functions/include

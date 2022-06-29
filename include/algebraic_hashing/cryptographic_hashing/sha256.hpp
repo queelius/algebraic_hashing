@@ -4,7 +4,7 @@
 #include <cstring>
 #include <cstdint>
 
-namespace algebraic_cryptographic_hashes
+namespace algebraic_hashing::cryptographic_hashing
 {
     class sha256
     {
@@ -106,7 +106,7 @@ namespace algebraic_cryptographic_hashes
         0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
     };
 
-    void SHA256::transform(const unsigned char* message, unsigned int block_nb)
+    void sha256::transform(const unsigned char* message, unsigned int block_nb)
     {
         uint32_t w[64];
         uint32_t wv[8];
@@ -150,7 +150,7 @@ namespace algebraic_cryptographic_hashes
         }
     }
 
-    void SHA256::init()
+    void sha256::init()
     {
         m_h[0] = 0x6a09e667;
         m_h[1] = 0xbb67ae85;
@@ -164,7 +164,7 @@ namespace algebraic_cryptographic_hashes
         m_tot_len = 0;
     }
 
-    void SHA256::update(const unsigned char* message, unsigned int len)
+    void sha256::update(const unsigned char* message, unsigned int len)
     {
         unsigned int block_nb;
         unsigned int new_len, rem_len, tmp_len;
@@ -188,7 +188,7 @@ namespace algebraic_cryptographic_hashes
         m_tot_len += (block_nb + 1) << 6;
     }
 
-    void SHA256::final(unsigned char* digest)
+    void sha256::final(unsigned char* digest)
     {
         unsigned int block_nb;
         unsigned int pm_len;
@@ -247,12 +247,5 @@ namespace algebraic_cryptographic_hashes
             sprintf(buf + i * 2, "%02x", digest[i]);
         buf[SHA256::HEX_DIGEST_SIZE] = 0;
         return std::string(buf);
-    }
-
-
-
-    struct sha256_hash
-    {
-        
     }
 }

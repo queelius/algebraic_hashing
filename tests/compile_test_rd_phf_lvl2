@@ -1,0 +1,2 @@
+#!/bin/sh
+g++ -std=c++20 -O3 -o test_rd_phf_lvl2 test_rd_phf_lvl2.cpp -I ~/sources/algebraic_hash_functions/include -pthread

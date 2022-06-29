@@ -1,16 +1,16 @@
 #pragma once
 
-#include "phf_lvl2.hpp"
+#include "rd_phf_lvl2.hpp"
 #include <vector>
 #include <algorithm>
 #include <limits>
-#include <unordered_set>
 #include <chrono>
+#include <iostream>
 
-namespace perfect_hashing
+namespace algebraic_hashing::perfect_hashing
 {
   template <typename H>
-  struct phf_lvl2_builder
+  struct rd_phf_lvl2_builder
   {
     static auto max_index()
     {
@@ -46,13 +46,17 @@ namespace perfect_hashing
     std::ostream & debug_out;
     double r;
     H h;
+    size_t l0;
     size_t lower_index;
     size_t upper_index;
     size_t m;
     std::chrono::milliseconds duration;
 
-    phf_lvl2_builder() :
+    rd_phf_lvl2_builder() :
+      debug(false),
+      debug_out(std::cout),
       r(default_load_factor()),
+      l0(0),
       lower_index(min_index()),
       upper_index(max_index()),
       m(0),
@@ -96,11 +100,23 @@ namespace perfect_hashing
      * @param m number of buckets (bins). if 0, then automatically sets it to
      *          some "good" value.
      */
-    auto & num_buckets(size_t m = 0)
+    auto & num_buckets(size_t value = 0)
     {
-      this->m = m;
+      m = value;
       return *this;
     }
+
+    /**
+     * @brief Set the level 0 index.
+     * 
+     * @param l0 level 0 index.
+     */
+    auto & level0(size_t value = 0)
+    {
+      l0 = value;
+      return *this;
+    }
+
 
     /**
      * @brief Set the target load factor, a value in the interval (0,1].
@@ -108,9 +124,9 @@ namespace perfect_hashing
      *          if a perfect hash function cannot be constructed, then the load
      *          factor for the perfectly hashed subset has r as an upper-bound.
      */
-    auto & load_factor(double r)
+    auto & load_factor(double value)
     {
-      this->r = std::min(max_load_factor(), std::max(r, min_load_factor()));
+      r = std::min(max_load_factor(), std::max(value, min_load_factor()));
       return *this;
     }
 
@@ -150,6 +166,29 @@ namespace perfect_hashing
     template <typename I>
     auto operator()(I begin, I end)
     {
+      std::sort(begin,end);
+      end = std::unique(begin,end);
+
+      auto res = build(begin,end,l0);
+      auto min_error = res.error_rate();
+      if (l0 == 0)
+      {
+        for (size_t l = 1; l < 3000; ++l)
+        {
+            auto trial = build(begin,end,l);
+            if (trial.error_rate() < min_error)
+            {
+                min_error = trial.error_rate();
+                res = trial;
+            }
+        }
+      }
+      return res;
+    }
+
+    template <typename I>
+    auto build(I begin, I end, size_t l0)
+    {
       using X = typename std::iterator_traits<I>::value_type;
       struct entry
       {
@@ -157,57 +196,75 @@ namespace perfect_hashing
           std::vector<X> xs;
       };
 
-      std::sort(begin,end);
-      end = std::unique(begin,end);
       auto sz = std::distance(begin,end);
       auto N = (size_t)std::ceil(sz/r);
 
       if (m == 0)
         m = (size_t)std::ceil(sqrt((double)sz));
-      
-      std::vector<entry> B(m);            
-      std::unordered_set<size_t> T;
-      std::unordered_set<size_t> K;
-      std::vector<size_t> sigma(m,1);
 
-      for (size_t i = 0; i < m; ++i)
-        B[i].index = i;
+      std::vector<entry> B(m);            
+      std::vector<bool> T(N,false);
+      std::vector<size_t> sigma(m,0);
 
       for (auto x = begin; x != end; ++x)
-        B[h(*x) % m].xs.push_back(*x);
+      {
+        auto h0 = h.mix(l0,*x) % m;
+        B[h0].xs.push_back(*x);
+        B[h0].index = h0;
+      }
 
       std::sort(B.begin(), B.end(),
         [](auto const & b1, auto const & b2)
         { return b1.xs.size() > b2.xs.size(); });
 
-      auto const start_time = std::chrono::system_clock::now();
-      for (size_t i = 0; i < m; ++i)
+      if (debug)
       {
-        auto const cur_time = std::chrono::system_clock::now();
-        auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-          cur_time - start_time);
+        debug_out << "l0: " << l0 << "\n";
+        debug_out << "#(bins): " << m << "\n";
+        for (auto const & b : B)
+            debug_out << "size(bin #" << b.index << "): " << b.xs.size() << "\n";
+      }
+
+      size_t total_cols = 0;
+      auto const start_time = std::chrono::system_clock::now();
+      for (auto const & b : B)
+      {
+        auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>
+            (std::chrono::system_clock::now() - start_time);
         if (elapsed > duration)
-          break;
+            break;
 
-        size_t l = 1;
-        size_t j = 0;
-
-        K.clear();
-        while (j < B[i].xs.size())
+        size_t l1;
+        auto col1 = b.xs.size();
+        std::vector<bool> K;
+        for (size_t l = lower_index; l <= upper_index; ++l)
         {
-          auto const hash = h.mix(h(B[i].xs[j]),l) % N;
-          if (T.count(hash) != 0 || K.count(hash) != 0)
-            { ++l; j = 0; K.clear(); }
-          else
-            { K.insert(hash); ++j; }
+            K = T;
+            size_t col = 0;
+            for (auto const x : b.xs)
+            {
+                auto const hash = h.mix(l,x) % N;
+                if (K[hash])
+                    if (++col >= col1) break;
+                K[hash] = true;
+            }
+            if (col < col1)
+            {
+                col1 = col; l1 = l;
+                if (col1 == 0)
+                    break;
+            }
         }
 
-        sigma[B[i].index] = l;
-        for (auto j : K)
-          T.insert(j);
+        total_cols += col1;
+        sigma[b.index] = l1;
+        std::swap(T,K);
+        if (debug)
+            debug_out << "bin " << b.index << ": l1=" << l1 << ", col1=" << col1 << "\n";
       }
-      return phf_lvl2(N,m,h,sigma);
+      return rd_phf_lvl2(N,m,l0,(double)total_cols/sz,h,sigma);
     }
+
 
     template <typename X>
     auto operator()(X xs)
