@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include "lcg.hpp"
 #include <string_view>
 #include <array>
 
@@ -11,13 +10,14 @@ unsigned char hash(unsigned char x) { return x; }
 
 namespace cryptographic_hashing
 {
+
 template <
     size_t      R = 128,    // bit rate
     size_t      C = 64,     // bit capacity
     size_t      X = 0,      // seed for PRNG
     size_t      M = 0,      // minimum number of permutations
                             // per round
-    typename    PRNG = alex_lcg<31>>
+    typename    PRNG>
 class sponge_fn
 {
 public:

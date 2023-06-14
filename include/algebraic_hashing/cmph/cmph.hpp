@@ -1,5 +1,5 @@
 /**
- * @file CMPH.hpp
+ * @file cmph.hpp
  * @author Alex Towell
  * @date March 2014
  *

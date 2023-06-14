@@ -1,5 +1,15 @@
 #pragma once
 
+/**
+ * @file cmph_builder.hpp
+ * @brief C++ interface for cmph, a C library for constructing a family of perfect hash
+ * functions. This file contains the cmph_builder class, which is used to construct
+ * a cmph object. The cmph_builder class is a functor that takes a range of strings
+ * and constructs a cmph object. The cmph object can then be used to hash strings.
+ * 
+ * @see cmph.hpp
+ */
+
 #include "cmph.hpp"
 #include <vector>
 

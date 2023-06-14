@@ -3,6 +3,12 @@
 #include <array>
 #include "md5_hash.hpp"
 
+// i need to bring memset into scope
+#include <cstring>
+
+
+namespace algebraic_hashing {
+
 /**
  * md5 is a functor that models the concept of a cryptographic hash function
  * using the popular MD5 algorithm.
@@ -59,7 +65,7 @@ public:
      * over its image, so the entropy is not 128 bits, but estimated to be
      * around 127.3 bits.
      */
-    static auto entropy() const { return 127.3; }
+    auto entropy() const { return 127.3; }
 
     md5() { reset(); }
 
@@ -79,7 +85,7 @@ public:
      *     md5(&b1,3)() == h
      * is true.
      */
-    md5_hash operator()() const
+    md5_hash operator()() 
     {
         unsigned char padding[64] = {
             0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -134,7 +140,7 @@ public:
         if (n >= firstpart)
         {
             // fill buffer first, transform
-            memcpy(&buffer[index], input, firstpart);
+            memcpy(&buffer[index], x, firstpart);
             transform(buffer);
 
             // transform chunks of blocksize (64 bytes)
@@ -179,6 +185,19 @@ private:
             output[i] = ((uint32_t)input[j]) | (((uint32_t)input[j + 1]) << 8) |
                         (((uint32_t)input[j + 2]) << 16) | (((uint32_t)input[j + 3]) << 24);
     }
+
+    // encodes input (uint32_t) into output (uint8_t).
+    // assumes n is a multiple of 4.
+    void encode(uint8_t output[], const uint32_t input[], size_type n)
+    {
+        for (size_t i = 0, j = 0; j < n; i++, j += 4)
+        {
+            output[j] = input[i] & 0xff;
+            output[j + 1] = (input[i] >> 8) & 0xff;
+            output[j + 2] = (input[i] >> 16) & 0xff;
+            output[j + 3] = (input[i] >> 24) & 0xff;
+        }
+    }    
 
     void reset()
     {
@@ -283,16 +302,43 @@ private:
     uint8_t buffer[blocksize]; // bytes that didn't fit in last 64 byte chunk
     uint32_t count[2];         // 64-bit counter for number of bits (lo, hi)
     uint32_t state[4];         // digest so far
-
-    // low level logic operations
-    static uint32_t F(uint32_t x, uint32_t y, uint32_t z) { return x & y | ~x & z; }
-    static uint32_t G(uint32_t x, uint32_t y, uint32_t z) { return x & z | y & ~z; }
-    static uint32_t H(uint32_t x, uint32_t y, uint32_t z) { return x ^ y ^ z; }
-    static uint32_t I(uint32_t x, uint32_t y, uint32_t z) { return y ^ (x | ~z); }
-    static uint32_t rotate_left(uint32_t x, int n) { return (x << n) | (x >> (32 - n)); }
-    static void FF(uint32_t &a, uint32_t b, uint32_t c, uint32_t d, uint32_t x, uint32_t s, uint32_t ac) { a = rotate_left(a + F(b, c, d) + x + ac, s) + b; }
-    static void GG(uint32_t &a, uint32_t b, uint32_t c, uint32_t d, uint32_t x, uint32_t s, uint32_t ac) { a = rotate_left(a + G(b, c, d) + x + ac, s) + b; }
-    static void HH(uint32_t &a, uint32_t b, uint32_t c, uint32_t d, uint32_t x, uint32_t s, uint32_t ac) { a = rotate_left(a + H(b, c, d) + x + ac, s) + b; }
-    static void II(uint32_t &a, uint32_t b, uint32_t c, uint32_t d, uint32_t x, uint32_t s, uint32_t ac) { a = rotate_left(a + I(b, c, d) + x + ac, s) + b; }
 };
 
+// performs the MD5 transformation operations
+#define FF(a, b, c, d, x, s, ac)                      \
+    {                                                  \
+        (a) += F((b), (c), (d)) + (x) + (uint32_t)(ac); \
+        (a) = ROTATE_LEFT((a), (s));                   \
+        (a) += (b);                                    \
+    }
+
+#define GG(a, b, c, d, x, s, ac)                       \
+    {                                                   \
+        (a) += G((b), (c), (d)) + (x) + (uint32_t)(ac); \
+        (a) = ROTATE_LEFT((a), (s));                    \
+        (a) += (b);                                     \
+    }
+
+#define HH(a, b, c, d, x, s, ac)                       \
+    {                                                   \
+        (a) += H((b), (c), (d)) + (x) + (uint32_t)(ac); \
+        (a) = ROTATE_LEFT((a), (s));                    \
+        (a) += (b);                                     \
+    }
+
+#define II(a, b, c, d, x, s, ac)                       \
+    {                                                   \
+        (a) += I((b), (c), (d)) + (x) + (uint32_t)(ac); \
+        (a) = ROTATE_LEFT((a), (s));                    \
+        (a) += (b);                                     \
+    }
+
+// basic transformation functions used in the MD5 algorithm
+#define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
+#define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
+#define H(x, y, z) ((x) ^ (y) ^ (z))
+#define I(x, y, z) ((y) ^ ((x) | (~z)))
+
+#define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
+
+}
