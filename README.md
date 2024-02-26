@@ -5,12 +5,10 @@ Hash Functions
 --------------
 
 A hash function
-
 $$
 f : X \mapsto \{0,1\}^k
 $$
-
-for some data type $X$ maps every $x \in X$ to some bit string of lengh $k > 0$.
+for some data type $X$ maps every $x \in X$ to some bit string of lengh $k$.
 In the context of hash functions, we may substitute *maps* with *hashes*, i.e.,
 $x$ *hashes* to $f(x)$.
 
@@ -19,32 +17,17 @@ The elements of $X$ should be, a priori, appear uniformly distributed over the
 codomain $\{0,1\}^k$ and thus, the probability that two random elements $x,y \in X$
 collide is given by $|X|^{-1}$.
 
-We implement several hash functions, both cryptographic and
-non-cryptographic.
+We implement several hash functions, both cryptographic and non-cryptographic.
 
-We then provide a sort of an algebra over these hash functions,
-e.g., composing a hash function with certain types of functions
-results in other hash functions.
+We then provide a sort of an algebra over these hash functions, e.g., composing
+a hash function with certain types of functions results in other hash functions.
 
 Perfect Hash Functions
 ----------------------
-
-A hash function
-
-$$
-f : X \mapsto \{0,1\}^k
-$$
-
-for some data type $X$ maps every $x \in X$ to some bit string of lengh $k > 0$.
-In the context of hash functions, we may substitute *maps* with *hashes*, i.e.,
-$x$ *hashes* to $f(x)$.
-
-A collision occurs between two values $x,y \in X$, $x \neq y$, if $f(x) = f(y)$.
-
 A **perfect** hash function $f$ over some subset $X' \subseteq X$ (where $X$ may
 be some data type, like a string) satisfies two conditions:
 
-1. $f \colon X \mapsto Y$ is a hash function.
+1. $f : X \mapsto Y$ is a hash function.
 2. $f$ is one-to-one over $X'$, i.e., no hash collisions occur on any pair of
 elements in $X'$.
 
