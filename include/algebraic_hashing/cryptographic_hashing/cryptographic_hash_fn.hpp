@@ -1,43 +1,38 @@
 #include "cryptographic_hash.hpp"
 
 /**
- * A cryptographic hash generator G must provide overloads of the types
+ * A cryptographic hash function G must provide overloads of the types
  *     G : () -> Hash,
- *     update : G & -> unsigned char * -> G::size_type -> G &,
+ *     update : (G &, unsigned char, G::size_type) -> G &,
  * and
- *     entropy : G const & -> Number.
+ *     entropy : G const & -> Number,
  * where Hash models the concept of a hash value corresponding to the state of
- * the generator G.
- * 
- * Since G is a hash generator, it accepts zero or more byte sequences using
- * the update procedure and may be invoked as a function to generate the hash
- * of the byte sequences fed to it.
+ * the hash function G.
  * 
  * Conceptually, G models a function of type
- *     G : ByteSequence -> Hash
- * but we break it up into two separate stages for computational efficeincy.
- * Rather than giving it the entire ByteSequence at once, we allow the
- * programmer to feed it byte sequences, one after the other, until there are
- * no more left. In other words, it is an online algorithm.
+ *     G : unsigned char* -> Hash
+ * but we break it up into two separate stages for computational efficiency.
+ * Rather than giving it the entire sequence unsigned char* at once, we allow the
+ * programmer to feed it elements of unsigned char*, in the same order, until there are
+ * no more left. (It is an online algorithm.)
  * 
- * The hash of the byte sequences x1,x2,...,xn is given by
+ * The hash of x1, x2,..., xn is given by
  *     G.update(x1).update(x2)...(xn)().
- * The hash of the empty string, G(), is the identity element over |,
+ * The hash of the empty string, G(), is 0^n. This is the identity element over |,
  *     G() | G.update(x1).update(x2)...(xn)() == G.update(x1).update(x2)...(xn)()
  * and is the zero element over &,
  *     G() & G.update(x1).update(x2)...(xn)() == G().
  *
  * A cryptographic hash generator G must provide overloads of the type
- *     G : (input: unsigned char *, n: G::size_type) -> G &
+ *     G : (input: unsigned char*, n: G::size_type) -> G &
  * which is not a function but a procedure that mutates the state of G
  * and returns a non-const reference as output (to facilitate chaining).
  * 
- * input is a pointer to a byte (char) sequence.
+ * - `input` is a pointer to a byte (char) sequence.
+ * - `n` is the number of bytes from the sequence, starting at the address being
+ * pointed to by input, to apply the hash function.
  * 
- * n is the number of bytes from the sequence, starting at the address being
- * pointed to by input, to apply the md5 generator.
- * 
- * For an object to be cryptographically hashed by the generator G, there must
+ * For an object to be cryptographically hashed by G, there must
  * be a way to map the object to a sequence of bytes. If the mapping is
  * injective, T -> (unsigned char*, G::size_type), then the probability that
  * two non-identical objects of type T collide is given by
@@ -46,28 +41,21 @@
  * 
  * where G::entropy() is the Shannnon entropy of G. Generally, G::entropy()
  * is only an estimate, and may change over time. The maximum entropy is given
- * by k where k is the bit length of the fixed-size hash values.
+ * by $k$ where $k$ is the bit length of the fixed-size hash digest.
  * 
  * A second-preimage attack is the problem of for a given x, find an x' s.t.
  * h(x) = h(x'), where each x' has probability 2^-G::entropy(). A collision
- * attack is when we try to find any two x,x' s.t. h(x) = h(x'), which has
- * probability 2^(-G::entropy/2). Note that, with respect to this attack,
- * even a maximum entropy hash function generator
- * 
+ * attack is when we try to find any two x and x' s.t. h(x) = h(x'), which has
+ * probability 2^(-G::entropy/2).
+ *
+ * ### Random Oracles
+ *
  * A random oracle is a theoretical device that maps bit sequences of arbitrary
  * length to bit sequences of infinite length such that, a priori, each bit
  * sequence in the domain has equal probability of being mapped to any element
  * in the codomain. Clearly, the entropy is thus infinite. If we concatenate
  * the output of the random oracle to k bits, we have an ideal cryptographic
- * hash function with entropy 2^k.
- * 
- * Note: If the mapping function is not injective, i.e., different objects of
- * type T map to the same byte sequence, then this introduces another way in
- * which objectives may collide and thus 2^(-G::entropy()) is the least
- * lower-bound for the probability of a collision.
- * 
- * If we are interested in the probability of collision over some set of types
- * {T1,...,Tm}, then the mapping function is also a function of the type.
+ * hash function with entropy $k$.
  */
 
 
@@ -172,7 +160,7 @@ private:
         G g;
 
         std::string generate() const override { return hexadecimal(g()); }
-        concept * clone() const { return std::unique_ptr<concept>{new G(g)}; }
+        concept * clone() const { return std::unique_ptr<hash_fn_concept>{new G(g)}; }
         double entropy() const override { return static_cast<double>(entropy(g)); }
         void update(unsigned char * input, size_type n) override { G.update(input,n); }
     };
