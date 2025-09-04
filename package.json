@@ -1,0 +1,53 @@
+{
+  "name": "algebraic_hashing",
+  "version": "2.0.0",
+  "description": "Modern C++20 library for algebraic hash function composition",
+  "keywords": [
+    "cpp20",
+    "header-only",
+    "hash-functions",
+    "cryptography",
+    "algorithms",
+    "mathematics",
+    "composition",
+    "fnv",
+    "perfect-hashing",
+    "concepts"
+  ],
+  "homepage": "https://github.com/algebraic-hashing/algebraic_hashing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/algebraic-hashing/algebraic_hashing.git"
+  },
+  "bugs": {
+    "url": "https://github.com/algebraic-hashing/algebraic_hashing/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Algebraic Hashing Project"
+  },
+  "maintainers": [
+    {
+      "name": "Algebraic Hashing Project"
+    }
+  ],
+  "engines": {
+    "cmake": ">=3.20.0"
+  },
+  "devDependencies": {
+    "conan": ">=2.0.0"
+  },
+  "scripts": {
+    "build": "cmake -B build && cmake --build build",
+    "test": "cmake -B build -DBUILD_TESTING=ON && cmake --build build && cd build && ctest",
+    "format": "find include tests examples -name '*.hpp' -o -name '*.cpp' | xargs clang-format -i",
+    "lint": "clang-tidy include/algebraic_hashing/**/*.hpp",
+    "docs": "cmake -B build && cmake --build build --target docs",
+    "package": "conan create . --build missing"
+  },
+  "config": {
+    "language": "C++",
+    "standard": "C++20",
+    "type": "header-only-library"
+  }
+}
