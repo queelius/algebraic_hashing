@@ -14,13 +14,13 @@
     "perfect-hashing",
     "concepts"
   ],
-  "homepage": "https://github.com/algebraic-hashing/algebraic_hashing",
+  "homepage": "https://github.com/queelius/algebraic_hashing",
   "repository": {
     "type": "git",
-    "url": "https://github.com/algebraic-hashing/algebraic_hashing.git"
+    "url": "https://github.com/queelius/algebraic_hashing.git"
   },
   "bugs": {
-    "url": "https://github.com/algebraic-hashing/algebraic_hashing/issues"
+    "url": "https://github.com/queelius/algebraic_hashing/issues"
   },
   "license": "MIT",
   "author": {

@@ -25,10 +25,15 @@ endif()
 
 # Compiler-specific flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+    add_compile_options(-Wall -Wextra -Wpedantic)
     
-    # Enable optimizations for Release
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native")
+    # Only add conversion warnings for library development, not for consumers
+    if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+        add_compile_options(-Wconversion -Wshadow)
+    endif()
+    
+    # Enable optimizations for Release (avoid march=native for package distribution)
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
     
     # Enable debugging and sanitizers for Debug
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -fsanitize=address,undefined -fno-omit-frame-pointer")

@@ -32,8 +32,8 @@ class AlgebraicHashingConan(ConanFile):
     description = "Modern C++20 library for algebraic hash function composition"
     license = "MIT"
     author = "Algebraic Hashing Project"
-    url = "https://github.com/algebraic-hashing/algebraic_hashing"
-    homepage = "https://github.com/algebraic-hashing/algebraic_hashing"
+    url = "https://github.com/queelius/algebraic_hashing"
+    homepage = "https://github.com/queelius/algebraic_hashing"
     topics = ("hash-functions", "cryptography", "algorithms", "cpp20", "header-only", "mathematics")
     
     # Binary Configuration
@@ -203,7 +203,7 @@ class AlgebraicHashingConan(ConanFile):
             
             # Optimization flags for release builds
             if self.settings.build_type == "Release":
-                self.cpp_info.cppflags.extend(["-O3", "-march=native", "-DNDEBUG"])
+                self.cpp_info.cppflags.extend(["-O3", "-DNDEBUG"])
         
         # Preprocessor definitions based on options
         if self.options.enable_concepts_checking:

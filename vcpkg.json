@@ -3,7 +3,7 @@
   "name": "algebraic-hashing",
   "version": "2.0.0",
   "description": "Modern C++20 library for algebraic hash function composition",
-  "homepage": "https://github.com/algebraic-hashing/algebraic_hashing",
+  "homepage": "https://github.com/queelius/algebraic_hashing",
   "license": "MIT",
   "supports": "!uwp & !xbox",
   "dependencies": [],
