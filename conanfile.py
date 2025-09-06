@@ -197,13 +197,8 @@ class AlgebraicHashingConan(ConanFile):
             self.cpp_info.system_libs.append("pthread")
         
         # Compiler-specific flags
-        if self.settings.compiler == "gcc" or self.settings.compiler == "clang":
-            # Enable concepts and constexpr support
-            self.cpp_info.cppflags.extend(["-fconcepts", "-fconstexpr-steps=1000000"])
-            
-            # Optimization flags for release builds
-            if self.settings.build_type == "Release":
-                self.cpp_info.cppflags.extend(["-O3", "-DNDEBUG"])
+        # No additional compiler flags needed - let consumers handle optimization
+        # Header-only library should not impose specific optimization flags
         
         # Preprocessor definitions based on options
         if self.options.enable_concepts_checking:
@@ -217,11 +212,9 @@ class AlgebraicHashingConan(ConanFile):
     
     def package_id(self):
         """Define what affects the package binary compatibility."""
-        # Header-only library - package ID only depends on options that affect headers
+        # Header-only library - clear all settings/requirements 
         self.info.clear()
-        # Include options that affect the interface
-        self.info.options.enable_concepts_checking = self.options.enable_concepts_checking
-        self.info.options.enable_statistics = self.options.enable_statistics
+        # For header-only library, no specific package ID customization needed
 
 
 def ConanInvalidConfiguration(message):

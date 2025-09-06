@@ -5,6 +5,7 @@ Test package for AlgebraicHashing library.
 This validates that the package can be properly consumed by Conan users.
 """
 
+import os
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 from conan.tools.build import can_run
