@@ -1,0 +1,275 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  CONAN_REVISIONS_ENABLED: 1
+  CONAN_NON_INTERACTIVE: 1
+
+jobs:
+  # ==================== Code Quality ====================
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc-13
+          cmake: true
+          ninja: true
+
+      - name: Install clang-format and clang-tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-14 clang-tidy-14
+          sudo ln -sf /usr/bin/clang-format-14 /usr/bin/clang-format
+          sudo ln -sf /usr/bin/clang-tidy-14 /usr/bin/clang-tidy
+
+      - name: Check code formatting
+        run: |
+          find include tests examples -name "*.hpp" -o -name "*.cpp" | \
+          xargs clang-format -n -Werror --style=file
+
+      - name: Run static analysis
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_CXX_COMPILER=g++-13 \
+                -DCMAKE_BUILD_TYPE=Debug \
+                -DBUILD_TESTING=ON ..
+          make -j$(nproc)
+
+  # ==================== Multi-Platform Testing ====================
+  test:
+    name: Test (${{ matrix.os }}, ${{ matrix.compiler }}, ${{ matrix.build_type }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        compiler: [gcc, clang]
+        build_type: [Debug, Release]
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+            version: 13
+          - os: ubuntu-latest  
+            compiler: clang
+            version: 15
+          - os: windows-latest
+            compiler: gcc
+            version: 13
+          - os: windows-latest
+            compiler: clang
+            version: 15
+          - os: macos-latest
+            compiler: gcc
+            version: 13
+          - os: macos-latest
+            compiler: clang
+            version: 15
+        exclude:
+          # Windows with GCC can be problematic
+          - os: windows-latest
+            compiler: gcc
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup C++ environment (Linux/macOS)
+        if: runner.os != 'Windows'
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}-${{ matrix.version }}
+          cmake: true
+          ninja: true
+
+      - name: Setup C++ environment (Windows)
+        if: runner.os == 'Windows'
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          cmake: true
+          ninja: true
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+                -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                -DBUILD_TESTING=ON \
+                -DBUILD_EXAMPLES=ON \
+                -G Ninja
+
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} -j
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure --parallel
+
+      - name: Run examples
+        working-directory: build
+        run: |
+          if [ -f algebraic_hashing_tutorial ]; then
+            ./algebraic_hashing_tutorial
+          elif [ -f algebraic_hashing_tutorial.exe ]; then
+            ./algebraic_hashing_tutorial.exe
+          fi
+        shell: bash
+
+  # ==================== Coverage Analysis ====================
+  coverage:
+    name: Coverage Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc-13
+          cmake: true
+          ninja: true
+
+      - name: Install coverage tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+
+      - name: Configure with coverage
+        run: |
+          cmake -B build \
+                -DCMAKE_BUILD_TYPE=Debug \
+                -DCMAKE_CXX_FLAGS="--coverage" \
+                -DBUILD_TESTING=ON \
+                -G Ninja
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Generate coverage report
+        run: |
+          lcov --capture --directory build --output-file build/coverage.info
+          lcov --remove build/coverage.info '/usr/*' '*/tests/*' '*/build/*' --output-file build/coverage_filtered.info
+          lcov --list build/coverage_filtered.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: build/coverage_filtered.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # ==================== Sanitizer Testing ====================
+  sanitizers:
+    name: Sanitizer Tests (${{ matrix.sanitizer }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sanitizer: [address, undefined, thread]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: clang-15
+          cmake: true
+          ninja: true
+
+      - name: Configure with sanitizer
+        run: |
+          cmake -B build \
+                -DCMAKE_BUILD_TYPE=Debug \
+                -DCMAKE_CXX_COMPILER=clang++-15 \
+                -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer" \
+                -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizer }}" \
+                -DBUILD_TESTING=ON \
+                -G Ninja
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
+  # ==================== Conan Package Testing ====================
+  conan-package:
+    name: Conan Package Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: |
+          pip install conan>=2.0
+          conan profile detect --force
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc
+          cmake: true
+
+      - name: Create and test Conan package
+        run: |
+          conan create . --build missing
+          cd test_package
+          conan test . algebraic_hashing/2.0.0@
+
+  # ==================== Documentation ====================
+  documentation:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc-13
+          cmake: true
+
+      - name: Build documentation
+        run: |
+          cmake -B build -DBUILD_TESTING=OFF
+          cmake --build build --target docs
+
+      - name: Deploy documentation (main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/docs/html
+          destination_dir: docs

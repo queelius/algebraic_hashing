@@ -1,0 +1,96 @@
+# Clang-Tidy Configuration for AlgebraicHashing
+# Comprehensive static analysis for modern C++20 code
+
+Checks: >
+  *,
+  -altera-*,
+  -android-*,
+  -fuchsia-*,
+  -google-*,
+  +google-explicit-constructor,
+  +google-global-names-in-headers,
+  -llvm-*,
+  +llvm-namespace-comment,
+  -zircon-*,
+  -abseil-*,
+  -boost-*,
+  -cert-env33-c,
+  -cert-dcl21-cpp,
+  -hicpp-*,
+  +hicpp-exception-baseclass,
+  +hicpp-multiway-paths-covered,
+  -llvmlibc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-const-correctness,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -bugprone-easily-swappable-parameters
+
+WarningsAsErrors: >
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*
+
+CheckOptions:
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+  - key: readability-identifier-naming.ClassCase
+    value: lower_case
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: _
+  - key: readability-identifier-naming.ProtectedMemberSuffix
+    value: _
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.StaticConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.MemberConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: CamelCase
+  - key: modernize-loop-convert.MaxCopySize
+    value: '16'
+  - key: modernize-loop-convert.MinConfidence
+    value: reasonable
+  - key: modernize-loop-convert.NamingStyle
+    value: lower_case
+  - key: modernize-pass-by-value.IncludeStyle
+    value: llvm
+  - key: modernize-replace-auto-ptr.IncludeStyle
+    value: llvm
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: performance-for-range-copy.WarnOnAllAutoCopies
+    value: true
+  - key: performance-inefficient-string-concatenation.StrictMode
+    value: true
+  - key: performance-type-promotion-in-math-fn.IncludeStyle
+    value: llvm
+  - key: performance-unnecessary-value-param.IncludeStyle
+    value: llvm
+
+HeaderFilterRegex: '(include/algebraic_hashing/.*\.hpp)$'
+
+AnalyzeTemporaryDtors: false

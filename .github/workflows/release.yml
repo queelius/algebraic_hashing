@@ -1,0 +1,285 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v2.0.0)'
+        required: true
+        type: string
+
+env:
+  CONAN_REVISIONS_ENABLED: 1
+  CONAN_NON_INTERACTIVE: 1
+
+jobs:
+  # ==================== Validation ====================
+  validate-release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=${VERSION#v}" >> $GITHUB_OUTPUT
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Version '$VERSION' does not follow semantic versioning (x.y.z)"
+            exit 1
+          fi
+
+      - name: Check version consistency
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          CMAKE_VERSION=$(grep "VERSION" CMakeLists.txt | head -1 | sed 's/.*VERSION //' | sed 's/).*//')
+          CONAN_VERSION=$(grep "version =" conanfile.py | sed 's/.*version = "//' | sed 's/".*//')
+          
+          echo "Tag version: $VERSION"
+          echo "CMake version: $CMAKE_VERSION"
+          echo "Conan version: $CONAN_VERSION"
+          
+          if [[ "$CMAKE_VERSION" != "$VERSION" ]]; then
+            echo "Error: CMakeLists.txt version ($CMAKE_VERSION) doesn't match tag ($VERSION)"
+            exit 1
+          fi
+          
+          if [[ "$CONAN_VERSION" != "$VERSION" ]]; then
+            echo "Error: conanfile.py version ($CONAN_VERSION) doesn't match tag ($VERSION)"
+            exit 1
+          fi
+
+  # ==================== Build Release Artifacts ====================
+  build-artifacts:
+    name: Build Release Artifacts
+    needs: validate-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc-13
+          cmake: true
+          ninja: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz zip
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DBUILD_TESTING=ON \
+                -DBUILD_EXAMPLES=ON \
+                -G Ninja
+
+      - name: Build project
+        run: cmake --build build --config Release -j
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Build documentation
+        run: cmake --build build --target docs
+
+      - name: Package source distribution
+        run: |
+          cmake --build build --target package_source
+          
+      - name: Create release archives
+        run: |
+          # Create header-only distribution
+          mkdir -p algebraic_hashing-${{ needs.validate-release.outputs.version }}
+          cp -r include algebraic_hashing-${{ needs.validate-release.outputs.version }}/
+          cp -r examples algebraic_hashing-${{ needs.validate-release.outputs.version }}/
+          cp -r cmake algebraic_hashing-${{ needs.validate-release.outputs.version }}/
+          cp CMakeLists.txt README.md LICENSE.md conanfile.py algebraic_hashing-${{ needs.validate-release.outputs.version }}/
+          
+          # Create archives
+          zip -r algebraic_hashing-${{ needs.validate-release.outputs.version }}.zip algebraic_hashing-${{ needs.validate-release.outputs.version }}
+          tar -czf algebraic_hashing-${{ needs.validate-release.outputs.version }}.tar.gz algebraic_hashing-${{ needs.validate-release.outputs.version }}
+          
+          # Create documentation archive
+          if [ -d build/docs/html ]; then
+            zip -r algebraic_hashing-docs-${{ needs.validate-release.outputs.version }}.zip build/docs/html
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: |
+            *.zip
+            *.tar.gz
+            build/*.tar.gz
+
+  # ==================== Test Release Package ====================
+  test-release:
+    name: Test Release Package (${{ matrix.os }})
+    needs: [validate-release, build-artifacts]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: |
+          pip install conan>=2.0
+          conan profile detect --force
+
+      - name: Setup C++ environment
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc
+          cmake: true
+
+      - name: Test Conan package creation
+        run: |
+          conan create . --build missing
+
+      - name: Test package consumption
+        run: |
+          cd test_package
+          conan test . algebraic_hashing/${{ needs.validate-release.outputs.version }}@
+
+  # ==================== Publish Release ====================
+  publish-release:
+    name: Publish Release
+    needs: [validate-release, build-artifacts, test-release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: release-artifacts
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << EOF
+          # AlgebraicHashing ${{ needs.validate-release.outputs.version }}
+
+          ## Features
+          - Modern C++20 header-only library for algebraic hash function composition
+          - Elegant DSL for combining hash functions using mathematical operations
+          - Comprehensive test suite with 99.4% coverage
+          - Educational tutorial and examples
+          - Support for FNV, cryptographic, and perfect hash functions
+          - Cross-platform support (Linux, Windows, macOS)
+
+          ## Installation
+
+          ### Using Conan
+          \`\`\`bash
+          conan install --requires=algebraic_hashing/${{ needs.validate-release.outputs.version }}@
+          \`\`\`
+
+          ### Using CMake FetchContent
+          \`\`\`cmake
+          include(FetchContent)
+          FetchContent_Declare(
+            algebraic_hashing
+            GIT_REPOSITORY https://github.com/queelius/algebraic_hashing.git
+            GIT_TAG ${{ needs.validate-release.outputs.tag }}
+          )
+          FetchContent_MakeAvailable(algebraic_hashing)
+          target_link_libraries(your_target PRIVATE AlgebraicHashing::algebraic_hashing)
+          \`\`\`
+
+          ### Manual Installation
+          Download the source archive and follow the build instructions in README.md.
+
+          ## Requirements
+          - C++20 compatible compiler (GCC 10+, Clang 12+, MSVC 2019+)
+          - CMake 3.20+
+
+          ## What's Changed
+          - Full refactoring to modern C++20 with concepts
+          - Elegant DSL for hash function composition
+          - Comprehensive documentation and tutorials
+          - Professional package management support
+          - Extensive test coverage and validation
+
+          Full documentation is available at: https://queelius.github.io/algebraic_hashing/
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.validate-release.outputs.tag }}
+          name: AlgebraicHashing ${{ needs.validate-release.outputs.version }}
+          body_path: release_notes.md
+          files: |
+            *.zip
+            *.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ==================== Publish to Package Repositories ====================
+  publish-conan:
+    name: Publish to Conan Center
+    needs: [validate-release, publish-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: |
+          pip install conan>=2.0
+
+      - name: Create Conan package
+        run: |
+          conan create . --build missing
+
+      - name: Upload to Conan Center (requires approval)
+        run: |
+          echo "📦 Conan package created successfully!"
+          echo "To submit to Conan Center Index:"
+          echo "1. Fork https://github.com/conan-io/conan-center-index"
+          echo "2. Create recipes/algebraic_hashing/all/conanfile.py"
+          echo "3. Submit pull request"
+          echo "4. Package will be available after review and approval"

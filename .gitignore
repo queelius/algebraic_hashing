@@ -1,13 +1,45 @@
-/build* 
-/.vscode
-.clang-format
-# ignore all . files and . folders. note: .*/ ignores only .folders
-.*
-# except do not ignore .gitignore. note: may omit if .gitignore is explicitly
-# tracked
-!/.gitignore
+# Build directories
+/build*/
+build/
+cmake-build-*/
 
-/build* 
+# IDE directories
+/.vscode
+/.idea
+
+# Compiled binaries
+*.exe
+*.out
+*.app
+test_debug
+example_test
+
+# Conan artifacts
+conan-center-index/
+CMakeUserPresets.json
+test_package/build/
+test_package/CMakeUserPresets.json
+
+# Package archives
+*.tar.gz
+*.zip
+*.tgz
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Hidden files (but keep important ones)
+.*
+!/.gitignore
+!/.gitattributes
+!/.github
+!/.clang-format
+!/.clang-tidy
+!/.codecov.yml
+!/.claude 
 main.pdf
 *.log
 *.out

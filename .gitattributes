@@ -1,0 +1,77 @@
+# Git Attributes for AlgebraicHashing
+# Ensures consistent line endings and proper file handling across platforms
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# C++ source files
+*.cpp text diff=cpp
+*.hpp text diff=cpp
+*.h text diff=cpp
+*.c text diff=cpp
+*.cc text diff=cpp
+*.cxx text diff=cpp
+
+# CMake files
+*.cmake text
+CMakeLists.txt text
+
+# Configuration files
+*.json text
+*.yml text
+*.yaml text
+*.toml text
+*.ini text
+*.conf text
+
+# Documentation
+*.md text
+*.txt text
+*.rst text
+
+# Scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Archives and binaries
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.lib binary
+*.o binary
+*.obj binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Export ignore - files that shouldn't be included in distribution
+/.github export-ignore
+/tests export-ignore
+/build export-ignore
+/.vscode export-ignore
+/.idea export-ignore
+/.clang-format export-ignore
+/.clang-tidy export-ignore
+/.codecov.yml export-ignore
+/test_package export-ignore
+REFACTORING_SUMMARY.md export-ignore
+CLAUDE.md export-ignore
