@@ -8,6 +8,8 @@
 #include <tuple>
 #include <string>
 #include <compare>
+#include <cstdint>
+#include <limits>
 
 namespace algebraic_hashing {
 
@@ -226,12 +228,22 @@ namespace details {
 
 /**
  * fnv_hash models a non-cryptographic hash function of the type
- * 
+ *
  *     Hashable -> size_t.
+ *
+ * It supports an optional seed parameter to enable composition of
+ * different hash function instances.
  */
 struct fnv_hash
 {
     using hash_type = size_t;
+
+    size_t seed = 0;
+
+    /**
+     * @brief Construct fnv_hash with optional seed
+     */
+    constexpr fnv_hash(size_t seed = 0) : seed(seed) {}
 
     /**
      * @brief retrieves the maximum hash value
@@ -251,7 +263,7 @@ struct fnv_hash
      * @param x the value type to update (mix) h with
      */
     template <typename X>
-    static auto mix(size_t h, X x)
+    auto mix(size_t h, X x) const
     {
         h ^= details::fnv_hash(x);
         h *= details::fnv_params::prime;
@@ -261,7 +273,13 @@ struct fnv_hash
     template <typename X>
     auto operator()(X const & x) const
     {
-        return details::fnv_hash(x);
+        auto h = details::fnv_hash(x);
+        // Mix in the seed to differentiate hash instances
+        if (seed != 0) {
+            h ^= seed;
+            h *= details::fnv_params::prime;
+        }
+        return h;
     }
 
     auto operator<=>(fnv_hash const &) const = default;

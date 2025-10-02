@@ -5,6 +5,8 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <cstdint>
+#include <array>
 
 namespace algebraic_hashing {
 
@@ -41,7 +43,7 @@ struct hash_value
 
     auto begin() const { return data.begin(); }
     auto end() const { return data.end(); }
-    constexpr auto size() const { return sizeof(T) * N; }
+    constexpr auto size() const { return sizeof(uint8_t) * N; }
     auto operator[](size_t index) const { return data[index]; }
     auto & operator[](size_t index) { return data[index]; }
 
@@ -69,9 +71,9 @@ struct hash_value
         // we store hash values as an array of unsigned ints [0,255].
         // we want to return them as hexadecimal values [0,ff],
         // where we store each element as a string of length 2, so that
-        // the hash value is a string of length 2*N. 
+        // the hash value is a string of length 2*N.
         for (auto const & b : data)
-            hex += to_hex_str(b, 2);
+            hex += to_hex(b, 2);
         return hex;
     }
 };
@@ -115,9 +117,9 @@ struct hash<algebraic_hashing::hash_value<N>>
 {
     size_t operator()(algebraic_hashing::hash_value<N> const & x) const
     {
-        uint8_t s = T(0);
+        size_t s = 0;
         for (size_t i = 0; i < N; ++i)
-            s ^= x[i] + T(0x9e3779b9) + (s << T(6)) + (s >> T(2));
+            s ^= x[i] + 0x9e3779b9 + (s << 6) + (s >> 2);
         return s;
     }
 };

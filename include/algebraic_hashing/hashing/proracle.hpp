@@ -1,7 +1,7 @@
 #pragma once
 
 #include <compare>
-#include <hash_value.hpp>
+#include <algebraic_hashing/hashing/hash_value.hpp>
 #include <array>
 
 namespace algebraic_hashing {
