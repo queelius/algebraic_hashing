@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/spinoza/github/released/algebraic_hashing/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

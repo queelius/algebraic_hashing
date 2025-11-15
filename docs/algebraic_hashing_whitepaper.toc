@@ -1,0 +1,45 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Motivation and Contributions}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Design Philosophy}{4}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Related Work}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Hash Function Composition}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Perfect Hash Functions}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Non-Cryptographic Hash Functions}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}C++ Template Metaprogramming and Concepts}{5}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Algebraic Approaches in Cryptography}{6}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Mathematical Foundations}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Algebraic Properties of Hash Functions}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Perfect Hash Functions}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Statistical Properties}{7}{subsection.3.3}%
+\contentsline {section}{\numberline {4}System Architecture}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Core Components}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}C++20 Concepts}{8}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Implementation Details}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}FNV-1a Hash Implementation}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Two-Level Perfect Hash Functions}{9}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Compile-Time Optimizations}{10}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Performance Evaluation}{10}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Methodology}{10}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Results}{11}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Statistical Quality}{11}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Use Cases and Applications}{11}{section.7}%
+\contentsline {subsection}{\numberline {7.1}High-Performance Hash Tables}{11}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Distributed Systems}{12}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Cryptographic Protocols}{12}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Compiler Symbol Tables}{13}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Comparison with Existing Solutions}{13}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Standard Library (std::hash)}{13}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Boost.Hash}{13}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}xxHash and CityHash}{14}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Future Directions}{14}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Planned Features}{14}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Research Opportunities}{14}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Conclusion}{14}{section.10}%
+\contentsline {section}{\numberline {A}API Reference}{16}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Core Concepts}{16}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Hash Functions}{16}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Composition Operations}{16}{subsection.A.3}%
+\contentsline {section}{\numberline {B}Installation and Usage}{17}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}Installation}{17}{subsection.B.1}%
+\contentsline {subsection}{\numberline {B.2}Basic Usage}{17}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}Building Perfect Hash Functions}{17}{subsection.B.3}%

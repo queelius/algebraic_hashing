@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage_filtered.info - core/hash_value.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">core</a> - hash_value.hpp<span style="font-size: 80%;"> (source / <a href="hash_value.hpp.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage_filtered.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">98.6&nbsp;%</td>
+            <td class="headerCovTableEntry">71</td>
+            <td class="headerCovTableEntry">70</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-11-13 19:24:55</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">55</td>
+            <td class="headerCovTableEntry">55</td>
+          </tr>
+                  <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : #pragma once</span>
+<span id="L2"><span class="lineNum">       2</span>              : </span>
+<span id="L3"><span class="lineNum">       3</span>              : #include &quot;concepts.hpp&quot;</span>
+<span id="L4"><span class="lineNum">       4</span>              : #include &lt;array&gt;</span>
+<span id="L5"><span class="lineNum">       5</span>              : #include &lt;string&gt;</span>
+<span id="L6"><span class="lineNum">       6</span>              : #include &lt;cstdint&gt;</span>
+<span id="L7"><span class="lineNum">       7</span>              : #include &lt;cstring&gt;</span>
+<span id="L8"><span class="lineNum">       8</span>              : #include &lt;bit&gt;</span>
+<span id="L9"><span class="lineNum">       9</span>              : #include &lt;span&gt;</span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &lt;compare&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &lt;ranges&gt;</span>
+<span id="L12"><span class="lineNum">      12</span>              : #include &lt;algorithm&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span>              : namespace algebraic_hashing {</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              : /**</span>
+<span id="L17"><span class="lineNum">      17</span>              :  * @brief Modern, pedagogical hash value type</span>
+<span id="L18"><span class="lineNum">      18</span>              :  * </span>
+<span id="L19"><span class="lineNum">      19</span>              :  * This class represents the output of hash functions and forms the foundation</span>
+<span id="L20"><span class="lineNum">      20</span>              :  * of our algebraic operations. It demonstrates key mathematical properties:</span>
+<span id="L21"><span class="lineNum">      21</span>              :  * </span>
+<span id="L22"><span class="lineNum">      22</span>              :  * 1. **Abelian Group under XOR**: (hash_value, ^, zero()) forms an abelian group</span>
+<span id="L23"><span class="lineNum">      23</span>              :  *    - Associative: (a ^ b) ^ c = a ^ (b ^ c)</span>
+<span id="L24"><span class="lineNum">      24</span>              :  *    - Commutative: a ^ b = b ^ a  </span>
+<span id="L25"><span class="lineNum">      25</span>              :  *    - Identity: a ^ zero() = a</span>
+<span id="L26"><span class="lineNum">      26</span>              :  *    - Inverse: a ^ a = zero()</span>
+<span id="L27"><span class="lineNum">      27</span>              :  * </span>
+<span id="L28"><span class="lineNum">      28</span>              :  * 2. **Ring-like Structure**: When combined with other operations, forms</span>
+<span id="L29"><span class="lineNum">      29</span>              :  *    algebraic structures useful for hash composition</span>
+<span id="L30"><span class="lineNum">      30</span>              :  * </span>
+<span id="L31"><span class="lineNum">      31</span>              :  * @tparam N Number of bytes in the hash value</span>
+<span id="L32"><span class="lineNum">      32</span>              :  */</span>
+<span id="L33"><span class="lineNum">      33</span>              : template&lt;std::size_t N&gt;</span>
+<span id="L34"><span class="lineNum">      34</span>              : class hash_value {</span>
+<span id="L35"><span class="lineNum">      35</span>              : public:</span>
+<span id="L36"><span class="lineNum">      36</span>              :     using value_type = std::uint8_t;</span>
+<span id="L37"><span class="lineNum">      37</span>              :     using container_type = std::array&lt;value_type, N&gt;;</span>
+<span id="L38"><span class="lineNum">      38</span>              :     using size_type = std::size_t;</span>
+<span id="L39"><span class="lineNum">      39</span>              :     </span>
+<span id="L40"><span class="lineNum">      40</span>              :     static constexpr size_type size_bytes = N;</span>
+<span id="L41"><span class="lineNum">      41</span>              :     static constexpr size_type size_bits = N * 8;</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span>              : private:</span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC tlaBgGNC">         597 :     container_type data_{};</span></span>
+<span id="L45"><span class="lineNum">      45</span>              : </span>
+<span id="L46"><span class="lineNum">      46</span>              : public:</span>
+<span id="L47"><span class="lineNum">      47</span>              :     // ==================== Construction ====================</span>
+<span id="L48"><span class="lineNum">      48</span>              :     </span>
+<span id="L49"><span class="lineNum">      49</span>              :     /**</span>
+<span id="L50"><span class="lineNum">      50</span>              :      * @brief Default constructor - creates the zero element</span>
+<span id="L51"><span class="lineNum">      51</span>              :      * </span>
+<span id="L52"><span class="lineNum">      52</span>              :      * The zero element is the additive identity in our algebra:</span>
+<span id="L53"><span class="lineNum">      53</span>              :      * zero() ^ h = h for any hash_value h</span>
+<span id="L54"><span class="lineNum">      54</span>              :      */</span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">          48 :     constexpr hash_value() = default;</span></span>
+<span id="L56"><span class="lineNum">      56</span>              :     </span>
+<span id="L57"><span class="lineNum">      57</span>              :     /**</span>
+<span id="L58"><span class="lineNum">      58</span>              :      * @brief Construct from byte array</span>
+<span id="L59"><span class="lineNum">      59</span>              :      */</span>
+<span id="L60"><span class="lineNum">      60</span>              :     constexpr explicit hash_value(container_type const&amp; data) : data_(data) {}</span>
+<span id="L61"><span class="lineNum">      61</span>              :     </span>
+<span id="L62"><span class="lineNum">      62</span>              :     /**</span>
+<span id="L63"><span class="lineNum">      63</span>              :      * @brief Construct from byte span</span>
+<span id="L64"><span class="lineNum">      64</span>              :      */</span>
+<span id="L65"><span class="lineNum">      65</span>              :     explicit hash_value(std::span&lt;value_type const, N&gt; bytes) {</span>
+<span id="L66"><span class="lineNum">      66</span>              :         std::ranges::copy(bytes, data_.begin());</span>
+<span id="L67"><span class="lineNum">      67</span>              :     }</span>
+<span id="L68"><span class="lineNum">      68</span>              :     </span>
+<span id="L69"><span class="lineNum">      69</span>              :     /**</span>
+<span id="L70"><span class="lineNum">      70</span>              :      * @brief Construct from raw bytes</span>
+<span id="L71"><span class="lineNum">      71</span>              :      */</span>
+<span id="L72"><span class="lineNum">      72</span>              :     explicit hash_value(value_type const* bytes) {</span>
+<span id="L73"><span class="lineNum">      73</span>              :         std::copy_n(bytes, N, data_.begin());</span>
+<span id="L74"><span class="lineNum">      74</span>              :     }</span>
+<span id="L75"><span class="lineNum">      75</span>              :     </span>
+<span id="L76"><span class="lineNum">      76</span>              :     // ==================== Algebraic Operations ====================</span>
+<span id="L77"><span class="lineNum">      77</span>              :     </span>
+<span id="L78"><span class="lineNum">      78</span>              :     /**</span>
+<span id="L79"><span class="lineNum">      79</span>              :      * @brief XOR assignment - fundamental algebraic operation</span>
+<span id="L80"><span class="lineNum">      80</span>              :      * </span>
+<span id="L81"><span class="lineNum">      81</span>              :      * This implements the group operation in our hash value algebra.</span>
+<span id="L82"><span class="lineNum">      82</span>              :      * Properties: associative, commutative, self-inverse.</span>
+<span id="L83"><span class="lineNum">      83</span>              :      */</span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">      600264 :     constexpr hash_value&amp; operator^=(hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaGNC">     5402424 :         for (size_type i = 0; i &lt; N; ++i) {</span></span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaGNC">     4802160 :             data_[i] ^= rhs.data_[i];</span></span>
+<span id="L87"><span class="lineNum">      87</span>              :         }</span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">      600264 :         return *this;</span></span>
+<span id="L89"><span class="lineNum">      89</span>              :     }</span>
+<span id="L90"><span class="lineNum">      90</span>              :     </span>
+<span id="L91"><span class="lineNum">      91</span>              :     /**</span>
+<span id="L92"><span class="lineNum">      92</span>              :      * @brief XOR operation</span>
+<span id="L93"><span class="lineNum">      93</span>              :      */</span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">      600264 :     constexpr friend hash_value operator^(hash_value lhs, hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">      600264 :         return lhs ^= rhs;</span></span>
+<span id="L96"><span class="lineNum">      96</span>              :     }</span>
+<span id="L97"><span class="lineNum">      97</span>              :     </span>
+<span id="L98"><span class="lineNum">      98</span>              :     /**</span>
+<span id="L99"><span class="lineNum">      99</span>              :      * @brief Bitwise complement</span>
+<span id="L100"><span class="lineNum">     100</span>              :      * </span>
+<span id="L101"><span class="lineNum">     101</span>              :      * Important for certain algebraic properties and hash transformations.</span>
+<span id="L102"><span class="lineNum">     102</span>              :      */</span>
+<span id="L103"><span class="lineNum">     103</span> <span class="tlaGNC">         126 :     constexpr hash_value operator~() const noexcept {</span></span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaGNC">         126 :         hash_value result;</span></span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaGNC">        1278 :         for (size_type i = 0; i &lt; N; ++i) {</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaGNC">        1152 :             result.data_[i] = ~data_[i];</span></span>
+<span id="L107"><span class="lineNum">     107</span>              :         }</span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaGNC">         126 :         return result;</span></span>
+<span id="L109"><span class="lineNum">     109</span>              :     }</span>
+<span id="L110"><span class="lineNum">     110</span>              :     </span>
+<span id="L111"><span class="lineNum">     111</span>              :     /**</span>
+<span id="L112"><span class="lineNum">     112</span>              :      * @brief Bitwise AND - useful for certain hash operations</span>
+<span id="L113"><span class="lineNum">     113</span>              :      */</span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">          21 :     constexpr hash_value&amp; operator&amp;=(hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">         189 :         for (size_type i = 0; i &lt; N; ++i) {</span></span>
+<span id="L116"><span class="lineNum">     116</span> <span class="tlaGNC">         168 :             data_[i] &amp;= rhs.data_[i];</span></span>
+<span id="L117"><span class="lineNum">     117</span>              :         }</span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">          21 :         return *this;</span></span>
+<span id="L119"><span class="lineNum">     119</span>              :     }</span>
+<span id="L120"><span class="lineNum">     120</span>              :     </span>
+<span id="L121"><span class="lineNum">     121</span> <span class="tlaGNC">          21 :     constexpr friend hash_value operator&amp;(hash_value lhs, hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaGNC">          21 :         return lhs &amp;= rhs;</span></span>
+<span id="L123"><span class="lineNum">     123</span>              :     }</span>
+<span id="L124"><span class="lineNum">     124</span>              :     </span>
+<span id="L125"><span class="lineNum">     125</span>              :     /**</span>
+<span id="L126"><span class="lineNum">     126</span>              :      * @brief Bitwise OR</span>
+<span id="L127"><span class="lineNum">     127</span>              :      */</span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaGNC">           9 :     constexpr hash_value&amp; operator|=(hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          81 :         for (size_type i = 0; i &lt; N; ++i) {</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          72 :             data_[i] |= rhs.data_[i];</span></span>
+<span id="L131"><span class="lineNum">     131</span>              :         }</span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">           9 :         return *this;</span></span>
+<span id="L133"><span class="lineNum">     133</span>              :     }</span>
+<span id="L134"><span class="lineNum">     134</span>              :     </span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">           9 :     constexpr friend hash_value operator|(hash_value lhs, hash_value const&amp; rhs) noexcept {</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">           9 :         return lhs |= rhs;</span></span>
+<span id="L137"><span class="lineNum">     137</span>              :     }</span>
+<span id="L138"><span class="lineNum">     138</span>              :     </span>
+<span id="L139"><span class="lineNum">     139</span>              :     // ==================== Special Elements ====================</span>
+<span id="L140"><span class="lineNum">     140</span>              :     </span>
+<span id="L141"><span class="lineNum">     141</span>              :     /**</span>
+<span id="L142"><span class="lineNum">     142</span>              :      * @brief Returns the zero element (additive identity)</span>
+<span id="L143"><span class="lineNum">     143</span>              :      */</span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">          12 :     static constexpr hash_value zero() noexcept {</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaGNC">          12 :         return hash_value{};</span></span>
+<span id="L146"><span class="lineNum">     146</span>              :     }</span>
+<span id="L147"><span class="lineNum">     147</span>              :     </span>
+<span id="L148"><span class="lineNum">     148</span>              :     /**</span>
+<span id="L149"><span class="lineNum">     149</span>              :      * @brief Returns the one element (all bits set)</span>
+<span id="L150"><span class="lineNum">     150</span>              :      * </span>
+<span id="L151"><span class="lineNum">     151</span>              :      * Useful as a multiplicative-like identity in certain contexts.</span>
+<span id="L152"><span class="lineNum">     152</span>              :      */</span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaGNC">          24 :     static constexpr hash_value ones() noexcept {</span></span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaGNC">          24 :         hash_value result;</span></span>
+<span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">          24 :         result.data_.fill(0xFF);</span></span>
+<span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          24 :         return result;</span></span>
+<span id="L157"><span class="lineNum">     157</span>              :     }</span>
+<span id="L158"><span class="lineNum">     158</span>              :     </span>
+<span id="L159"><span class="lineNum">     159</span>              :     /**</span>
+<span id="L160"><span class="lineNum">     160</span>              :      * @brief Check if this is the zero element</span>
+<span id="L161"><span class="lineNum">     161</span>              :      */</span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">         375 :     constexpr bool is_zero() const noexcept {</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">        1623 :         return std::ranges::all_of(data_, [](value_type b) { return b == 0; });</span></span>
+<span id="L164"><span class="lineNum">     164</span>              :     }</span>
+<span id="L165"><span class="lineNum">     165</span>              :     </span>
+<span id="L166"><span class="lineNum">     166</span>              :     // ==================== Access Operations ====================</span>
+<span id="L167"><span class="lineNum">     167</span>              :     </span>
+<span id="L168"><span class="lineNum">     168</span>              :     /**</span>
+<span id="L169"><span class="lineNum">     169</span>              :      * @brief Access byte at index</span>
+<span id="L170"><span class="lineNum">     170</span>              :      */</span>
+<span id="L171"><span class="lineNum">     171</span>              :     constexpr value_type operator[](size_type index) const noexcept {</span>
+<span id="L172"><span class="lineNum">     172</span>              :         return data_[index];</span>
+<span id="L173"><span class="lineNum">     173</span>              :     }</span>
+<span id="L174"><span class="lineNum">     174</span>              :     </span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">        4017 :     constexpr value_type&amp; operator[](size_type index) noexcept {</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">        4017 :         return data_[index];</span></span>
+<span id="L177"><span class="lineNum">     177</span>              :     }</span>
+<span id="L178"><span class="lineNum">     178</span>              :     </span>
+<span id="L179"><span class="lineNum">     179</span>              :     /**</span>
+<span id="L180"><span class="lineNum">     180</span>              :      * @brief Get underlying data</span>
+<span id="L181"><span class="lineNum">     181</span>              :      */</span>
+<span id="L182"><span class="lineNum">     182</span> <span class="tlaGNC">          57 :     constexpr container_type const&amp; data() const noexcept { return data_; }</span></span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">     1297818 :     constexpr container_type&amp; data() noexcept { return data_; }</span></span>
+<span id="L184"><span class="lineNum">     184</span>              :     </span>
+<span id="L185"><span class="lineNum">     185</span>              :     /**</span>
+<span id="L186"><span class="lineNum">     186</span>              :      * @brief Get as byte span</span>
+<span id="L187"><span class="lineNum">     187</span>              :      */</span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaGNC">         129 :     constexpr std::span&lt;value_type const&gt; bytes() const noexcept {</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">         129 :         return std::span{data_};</span></span>
+<span id="L190"><span class="lineNum">     190</span>              :     }</span>
+<span id="L191"><span class="lineNum">     191</span>              :     </span>
+<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">          69 :     constexpr std::span&lt;value_type&gt; bytes() noexcept {</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">          69 :         return std::span{data_};</span></span>
+<span id="L194"><span class="lineNum">     194</span>              :     }</span>
+<span id="L195"><span class="lineNum">     195</span>              :     </span>
+<span id="L196"><span class="lineNum">     196</span>              :     // ==================== Iterator Interface ====================</span>
+<span id="L197"><span class="lineNum">     197</span>              :     </span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">         828 :     constexpr auto begin() const noexcept { return data_.begin(); }</span></span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">         414 :     constexpr auto end() const noexcept { return data_.end(); }</span></span>
+<span id="L200"><span class="lineNum">     200</span>              :     constexpr auto begin() noexcept { return data_.begin(); }</span>
+<span id="L201"><span class="lineNum">     201</span>              :     constexpr auto end() noexcept { return data_.end(); }</span>
+<span id="L202"><span class="lineNum">     202</span>              :     </span>
+<span id="L203"><span class="lineNum">     203</span>              :     // ==================== Utility Operations ====================</span>
+<span id="L204"><span class="lineNum">     204</span>              :     </span>
+<span id="L205"><span class="lineNum">     205</span>              :     /**</span>
+<span id="L206"><span class="lineNum">     206</span>              :      * @brief Convert to hexadecimal string representation</span>
+<span id="L207"><span class="lineNum">     207</span>              :      * </span>
+<span id="L208"><span class="lineNum">     208</span>              :      * Provides human-readable output for debugging and display.</span>
+<span id="L209"><span class="lineNum">     209</span>              :      */</span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">           9 :     std::string to_hex() const {</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">           9 :         std::string result;</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">           9 :         result.reserve(N * 2);</span></span>
+<span id="L213"><span class="lineNum">     213</span>              :         </span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">         177 :         for (value_type byte : data_) {</span></span>
+<span id="L215"><span class="lineNum">     215</span>              :             // Use manual hex conversion since std::format might not be available</span>
+<span id="L216"><span class="lineNum">     216</span>              :             static const char hex_chars[] = &quot;0123456789abcdef&quot;;</span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">         168 :             result += hex_chars[byte &gt;&gt; 4];</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">         168 :             result += hex_chars[byte &amp; 0x0F];</span></span>
+<span id="L219"><span class="lineNum">     219</span>              :         }</span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">           9 :         return result;</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaUNC tlaBgUNC">           0 :     }</span></span>
+<span id="L222"><span class="lineNum">     222</span>              :     </span>
+<span id="L223"><span class="lineNum">     223</span>              :     /**</span>
+<span id="L224"><span class="lineNum">     224</span>              :      * @brief Convert to binary string representation</span>
+<span id="L225"><span class="lineNum">     225</span>              :      */</span>
+<span id="L226"><span class="lineNum">     226</span>              :     std::string to_binary() const {</span>
+<span id="L227"><span class="lineNum">     227</span>              :         std::string result;</span>
+<span id="L228"><span class="lineNum">     228</span>              :         result.reserve(N * 8);</span>
+<span id="L229"><span class="lineNum">     229</span>              :         </span>
+<span id="L230"><span class="lineNum">     230</span>              :         for (value_type byte : data_) {</span>
+<span id="L231"><span class="lineNum">     231</span>              :             for (int i = 7; i &gt;= 0; --i) {</span>
+<span id="L232"><span class="lineNum">     232</span>              :                 result += ((byte &gt;&gt; i) &amp; 1) ? '1' : '0';</span>
+<span id="L233"><span class="lineNum">     233</span>              :             }</span>
+<span id="L234"><span class="lineNum">     234</span>              :         }</span>
+<span id="L235"><span class="lineNum">     235</span>              :         return result;</span>
+<span id="L236"><span class="lineNum">     236</span>              :     }</span>
+<span id="L237"><span class="lineNum">     237</span>              :     </span>
+<span id="L238"><span class="lineNum">     238</span>              :     /**</span>
+<span id="L239"><span class="lineNum">     239</span>              :      * @brief Hamming weight (number of set bits)</span>
+<span id="L240"><span class="lineNum">     240</span>              :      * </span>
+<span id="L241"><span class="lineNum">     241</span>              :      * Useful for analyzing hash distribution properties.</span>
+<span id="L242"><span class="lineNum">     242</span>              :      */</span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC tlaBgGNC">         207 :     constexpr std::size_t popcount() const noexcept {</span></span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">         207 :         std::size_t count = 0;</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">        1863 :         for (value_type byte : data_) {</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">        1656 :             count += std::popcount(byte);</span></span>
+<span id="L247"><span class="lineNum">     247</span>              :         }</span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">         207 :         return count;</span></span>
+<span id="L249"><span class="lineNum">     249</span>              :     }</span>
+<span id="L250"><span class="lineNum">     250</span>              :     </span>
+<span id="L251"><span class="lineNum">     251</span>              :     // ==================== Comparison Operations ====================</span>
+<span id="L252"><span class="lineNum">     252</span>              :     </span>
+<span id="L253"><span class="lineNum">     253</span>              :     constexpr auto operator&lt;=&gt;(hash_value const&amp;) const noexcept = default;</span>
+<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">        1194 :     constexpr bool operator==(hash_value const&amp;) const noexcept = default;</span></span>
+<span id="L255"><span class="lineNum">     255</span>              : };</span>
+<span id="L256"><span class="lineNum">     256</span>              : </span>
+<span id="L257"><span class="lineNum">     257</span>              : // ==================== Free Functions ====================</span>
+<span id="L258"><span class="lineNum">     258</span>              : </span>
+<span id="L259"><span class="lineNum">     259</span>              : /**</span>
+<span id="L260"><span class="lineNum">     260</span>              :  * @brief Concatenate two hash values</span>
+<span id="L261"><span class="lineNum">     261</span>              :  * </span>
+<span id="L262"><span class="lineNum">     262</span>              :  * Creates a longer hash value by concatenating two shorter ones.</span>
+<span id="L263"><span class="lineNum">     263</span>              :  * Useful for building composite hash functions.</span>
+<span id="L264"><span class="lineNum">     264</span>              :  */</span>
+<span id="L265"><span class="lineNum">     265</span>              : template&lt;std::size_t N1, std::size_t N2&gt;</span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">          60 : constexpr hash_value&lt;N1 + N2&gt; concatenate(</span></span>
+<span id="L267"><span class="lineNum">     267</span>              :     hash_value&lt;N1&gt; const&amp; left, </span>
+<span id="L268"><span class="lineNum">     268</span>              :     hash_value&lt;N2&gt; const&amp; right) noexcept {</span>
+<span id="L269"><span class="lineNum">     269</span>              :     </span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          60 :     hash_value&lt;N1 + N2&gt; result;</span></span>
+<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          60 :     auto result_bytes = result.bytes();</span></span>
+<span id="L272"><span class="lineNum">     272</span>              :     </span>
+<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          60 :     std::ranges::copy(left.bytes(), result_bytes.begin());</span></span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          60 :     std::ranges::copy(right.bytes(), result_bytes.begin() + N1);</span></span>
+<span id="L275"><span class="lineNum">     275</span>              :     </span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaGNC">          60 :     return result;</span></span>
+<span id="L277"><span class="lineNum">     277</span>              : }</span>
+<span id="L278"><span class="lineNum">     278</span>              : </span>
+<span id="L279"><span class="lineNum">     279</span>              : /**</span>
+<span id="L280"><span class="lineNum">     280</span>              :  * @brief Truncate hash value to smaller size</span>
+<span id="L281"><span class="lineNum">     281</span>              :  * </span>
+<span id="L282"><span class="lineNum">     282</span>              :  * Takes the first N bytes of a larger hash value.</span>
+<span id="L283"><span class="lineNum">     283</span>              :  * Useful for adapting hash functions to different output sizes.</span>
+<span id="L284"><span class="lineNum">     284</span>              :  */</span>
+<span id="L285"><span class="lineNum">     285</span>              : template&lt;std::size_t NewSize, std::size_t OriginalSize&gt;</span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">           9 : constexpr hash_value&lt;NewSize&gt; truncate(hash_value&lt;OriginalSize&gt; const&amp; original) noexcept </span></span>
+<span id="L287"><span class="lineNum">     287</span>              :     requires (NewSize &lt;= OriginalSize) {</span>
+<span id="L288"><span class="lineNum">     288</span>              :     </span>
+<span id="L289"><span class="lineNum">     289</span> <span class="tlaGNC">           9 :     hash_value&lt;NewSize&gt; result;</span></span>
+<span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC">           9 :     std::ranges::copy_n(original.bytes().begin(), NewSize, result.bytes().begin());</span></span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">           9 :     return result;</span></span>
+<span id="L292"><span class="lineNum">     292</span>              : }</span>
+<span id="L293"><span class="lineNum">     293</span>              : </span>
+<span id="L294"><span class="lineNum">     294</span>              : // ==================== Common Type Aliases ====================</span>
+<span id="L295"><span class="lineNum">     295</span>              : </span>
+<span id="L296"><span class="lineNum">     296</span>              : using hash32 = hash_value&lt;4&gt;;   ///&lt; 32-bit hash value</span>
+<span id="L297"><span class="lineNum">     297</span>              : using hash64 = hash_value&lt;8&gt;;   ///&lt; 64-bit hash value  </span>
+<span id="L298"><span class="lineNum">     298</span>              : using hash128 = hash_value&lt;16&gt;; ///&lt; 128-bit hash value (MD5-sized)</span>
+<span id="L299"><span class="lineNum">     299</span>              : using hash256 = hash_value&lt;32&gt;; ///&lt; 256-bit hash value (SHA256-sized)</span>
+<span id="L300"><span class="lineNum">     300</span>              : using hash512 = hash_value&lt;64&gt;; ///&lt; 512-bit hash value (SHA512-sized)</span>
+<span id="L301"><span class="lineNum">     301</span>              : </span>
+<span id="L302"><span class="lineNum">     302</span>              : } // namespace algebraic_hashing</span>
+<span id="L303"><span class="lineNum">     303</span>              : </span>
+<span id="L304"><span class="lineNum">     304</span>              : // ==================== Standard Library Integration ====================</span>
+<span id="L305"><span class="lineNum">     305</span>              : </span>
+<span id="L306"><span class="lineNum">     306</span>              : namespace std {</span>
+<span id="L307"><span class="lineNum">     307</span>              : </span>
+<span id="L308"><span class="lineNum">     308</span>              : /**</span>
+<span id="L309"><span class="lineNum">     309</span>              :  * @brief Standard library hash specialization</span>
+<span id="L310"><span class="lineNum">     310</span>              :  * </span>
+<span id="L311"><span class="lineNum">     311</span>              :  * Allows hash_value to be used in standard containers that require hashing.</span>
+<span id="L312"><span class="lineNum">     312</span>              :  */</span>
+<span id="L313"><span class="lineNum">     313</span>              : template&lt;std::size_t N&gt;</span>
+<span id="L314"><span class="lineNum">     314</span>              : struct hash&lt;algebraic_hashing::hash_value&lt;N&gt;&gt; {</span>
+<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">          57 :     std::size_t operator()(algebraic_hashing::hash_value&lt;N&gt; const&amp; h) const noexcept {</span></span>
+<span id="L316"><span class="lineNum">     316</span>              :         // Use first sizeof(size_t) bytes as hash, or fold if too small</span>
+<span id="L317"><span class="lineNum">     317</span>              :         if constexpr (N &gt;= sizeof(std::size_t)) {</span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          57 :             std::size_t result;</span></span>
+<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          57 :             std::memcpy(&amp;result, h.data().data(), sizeof(std::size_t));</span></span>
+<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC">          57 :             return result;</span></span>
+<span id="L321"><span class="lineNum">     321</span>              :         } else {</span>
+<span id="L322"><span class="lineNum">     322</span>              :             std::size_t result = 0;</span>
+<span id="L323"><span class="lineNum">     323</span>              :             for (std::size_t i = 0; i &lt; N; ++i) {</span>
+<span id="L324"><span class="lineNum">     324</span>              :                 result ^= static_cast&lt;std::size_t&gt;(h[i]) &lt;&lt; (i * 8);</span>
+<span id="L325"><span class="lineNum">     325</span>              :             }</span>
+<span id="L326"><span class="lineNum">     326</span>              :             return result;</span>
+<span id="L327"><span class="lineNum">     327</span>              :         }</span>
+<span id="L328"><span class="lineNum">     328</span>              :     }</span>
+<span id="L329"><span class="lineNum">     329</span>              : };</span>
+<span id="L330"><span class="lineNum">     330</span>              : </span>
+<span id="L331"><span class="lineNum">     331</span>              : /**</span>
+<span id="L332"><span class="lineNum">     332</span>              :  * @brief String conversion support</span>
+<span id="L333"><span class="lineNum">     333</span>              :  */</span>
+<span id="L334"><span class="lineNum">     334</span>              : template&lt;std::size_t N&gt;</span>
+<span id="L335"><span class="lineNum">     335</span>              : string to_string(algebraic_hashing::hash_value&lt;N&gt; const&amp; h) {</span>
+<span id="L336"><span class="lineNum">     336</span>              :     return h.to_hex();</span>
+<span id="L337"><span class="lineNum">     337</span>              : }</span>
+<span id="L338"><span class="lineNum">     338</span>              : </span>
+<span id="L339"><span class="lineNum">     339</span>              : } // namespace std</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
