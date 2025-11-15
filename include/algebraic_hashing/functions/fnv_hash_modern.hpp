@@ -210,7 +210,8 @@ private:
             bytes[i] = static_cast<std::uint8_t>(value & 0xFF);
             value >>= 8;
         }
-        return std::span<const std::uint8_t>(bytes.data(), bytes.size());
+        // Return array directly, not a span to avoid stack-use-after-return
+        return bytes;
     }
     
     template<std::floating_point T>
@@ -223,11 +224,10 @@ private:
             auto int_value = std::bit_cast<std::uint64_t>(value);
             return get_arithmetic_bytes(int_value);
         } else {
-            // Fallback for unusual float types
-            return std::span<const std::uint8_t>(
-                reinterpret_cast<const std::uint8_t*>(&value), 
-                sizeof(T)
-            );
+            // Fallback for unusual float types - copy to array
+            std::array<std::uint8_t, sizeof(T)> bytes;
+            std::memcpy(bytes.data(), &value, sizeof(T));
+            return bytes;
         }
     }
     

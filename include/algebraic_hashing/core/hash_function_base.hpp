@@ -35,16 +35,29 @@ public:
 protected:
     /**
      * @brief Statistics for pedagogical analysis
+     *
+     * @warning NOT THREAD-SAFE: Statistics collection is not thread-safe.
+     * If you use hash functions concurrently from multiple threads, do NOT
+     * rely on statistics being accurate. Statistics are intended for
+     * educational/debugging purposes in single-threaded contexts only.
+     *
+     * For production multi-threaded use, either:
+     * 1. Ignore statistics (they may be inaccurate but won't cause crashes)
+     * 2. Use separate hash function instances per thread
+     * 3. Disable statistics collection with ALGEBRAIC_HASHING_DISABLE_STATISTICS
+     *
+     * The hash function itself IS thread-safe (const operations don't modify state),
+     * but statistics tracking uses mutable state that is not synchronized.
      */
     struct statistics {
         std::size_t calls = 0;
         std::size_t total_input_bytes = 0;
         std::chrono::nanoseconds total_time{0};
-        
+
         double average_time_ns() const {
             return calls > 0 ? static_cast<double>(total_time.count()) / calls : 0.0;
         }
-        
+
         double throughput_mbps() const {
             if (total_time.count() == 0) return 0.0;
             double seconds = total_time.count() / 1e9;
@@ -52,32 +65,41 @@ protected:
             return megabytes / seconds;
         }
     };
-    
+
+    #ifndef ALGEBRAIC_HASHING_DISABLE_STATISTICS
     mutable statistics stats_;
+    #endif
 
 public:
     // ==================== Core Interface ====================
     
     /**
      * @brief Main hash function interface
-     * 
+     *
      * This is the primary entry point that delegates to the derived class
-     * implementation while collecting statistics.
+     * implementation while optionally collecting statistics.
+     *
+     * @note Statistics collection can be disabled with ALGEBRAIC_HASHING_DISABLE_STATISTICS
      */
     template<concepts::Hashable T>
     hash_type operator()(T const& input) const {
+        #ifndef ALGEBRAIC_HASHING_DISABLE_STATISTICS
         auto start = std::chrono::high_resolution_clock::now();
-        
+        #endif
+
         hash_type result = static_cast<Derived const&>(*this).hash_impl(input);
-        
+
+        #ifndef ALGEBRAIC_HASHING_DISABLE_STATISTICS
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-        
+
         // Update statistics (mutable for const correctness)
+        // WARNING: Not thread-safe! See statistics struct documentation.
         ++stats_.calls;
         stats_.total_input_bytes += estimate_input_size(input);
         stats_.total_time += duration;
-        
+        #endif
+
         return result;
     }
     
@@ -131,17 +153,26 @@ public:
     
     /**
      * @brief Get performance statistics
+     *
+     * @note Only available when statistics are enabled (default).
+     * @warning Statistics are NOT thread-safe. Values may be inaccurate
+     *          if hash function is used concurrently.
      */
+    #ifndef ALGEBRAIC_HASHING_DISABLE_STATISTICS
     statistics const& get_statistics() const noexcept {
         return stats_;
     }
-    
+
     /**
      * @brief Reset statistics
+     *
+     * @warning NOT thread-safe. Do not call while hash function is being
+     *          used concurrently from other threads.
      */
     void reset_statistics() const noexcept {
         stats_ = statistics{};
     }
+    #endif
     
     /**
      * @brief Test hash distribution quality (simplified)

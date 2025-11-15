@@ -245,6 +245,57 @@ if(BUILD_TESTING)
         DEPENDS test_modern_architecture test_comprehensive_coverage
         COMMENT "Running all tests with verbose output"
     )
+
+    # ==================== Code Coverage ====================
+
+    option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
+
+    if(ENABLE_COVERAGE)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            message(STATUS "Code coverage enabled")
+
+            # Add coverage flags to test targets
+            target_compile_options(test_modern_architecture PRIVATE --coverage)
+            target_link_options(test_modern_architecture PRIVATE --coverage)
+
+            target_compile_options(test_comprehensive_coverage PRIVATE --coverage)
+            target_link_options(test_comprehensive_coverage PRIVATE --coverage)
+
+            # Find lcov and genhtml for coverage reporting
+            find_program(LCOV lcov)
+            find_program(GENHTML genhtml)
+
+            if(LCOV AND GENHTML)
+                # Custom target to generate coverage report
+                add_custom_target(coverage
+                    COMMAND ${CMAKE_COMMAND} -E echo "Running tests for coverage..."
+                    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+                    COMMAND ${CMAKE_COMMAND} -E echo "Capturing coverage data..."
+                    COMMAND ${LCOV} --capture --directory . --output-file coverage.info --ignore-errors mismatch,inconsistent
+                    COMMAND ${LCOV} --remove coverage.info '/usr/*' '*/tests/*' '*/googletest/*' --output-file coverage_filtered.info --ignore-errors mismatch,inconsistent
+                    COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML report..."
+                    COMMAND ${GENHTML} coverage_filtered.info --output-directory coverage_html --ignore-errors mismatch,inconsistent
+                    COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated in coverage_html/index.html"
+                    COMMAND ${CMAKE_COMMAND} -E echo "Coverage summary:"
+                    COMMAND ${LCOV} --summary coverage_filtered.info || true
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                    DEPENDS test_modern_architecture test_comprehensive_coverage
+                    COMMENT "Generating code coverage report"
+                )
+
+                # Target to open coverage report in browser
+                add_custom_target(coverage_open
+                    COMMAND xdg-open ${CMAKE_BINARY_DIR}/coverage_html/index.html || open ${CMAKE_BINARY_DIR}/coverage_html/index.html
+                    DEPENDS coverage
+                    COMMENT "Opening coverage report in browser"
+                )
+            else()
+                message(WARNING "lcov and/or genhtml not found. Install with: sudo apt-get install lcov")
+            endif()
+        else()
+            message(WARNING "Code coverage only supported with GCC or Clang")
+        endif()
+    endif()
 endif()
 
 # ==================== Documentation ====================

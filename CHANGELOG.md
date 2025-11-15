@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Advanced Composition Operators**: XOR, sequential, repeated, complement, chain, and parallel composition
 - **Educational Framework**: CRTP base class with statistics and analysis tools
 - **Modern FNV Implementation**: Multi-size FNV hash with compile-time evaluation
-- **Comprehensive Testing**: 99.4% test coverage with 48 test cases
+- **Comprehensive Testing**: Extensive test suite with comprehensive test cases
 - **Professional Build System**: CMake 3.20+ with proper package configuration
 - **Documentation**: Doxygen integration with comprehensive API documentation
 - **Package Management**: Full Conan 2.0 support with test package

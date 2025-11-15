@@ -18,6 +18,8 @@
 #include <tuple>
 #include <cstdint>
 #include <limits>
+#include <thread>
+#include <atomic>
 
 using namespace algebraic_hashing;
 using namespace algebraic_hashing::functions;
@@ -553,6 +555,553 @@ TEST_F(PerformanceCharacteristicsTest, CompositionOverhead) {
     
     EXPECT_GT(ratio, 2.5) << "Composition seems too fast";
     EXPECT_LT(ratio, 4.0) << "Composition overhead too high";
+}
+
+// ==================== Regression Tests ====================
+
+/**
+ * @brief Regression test for stack-use-after-return bug in get_arithmetic_bytes()
+ *
+ * This test catches a bug where get_arithmetic_bytes() returned a span
+ * pointing to a local array that was destroyed when the function returned.
+ *
+ * The bug manifested when hashing numeric types (integers, floats) because
+ * the hash function would read from deallocated stack memory, causing
+ * undefined behavior.
+ *
+ * This test verifies:
+ * 1. Numeric hashes are deterministic (same input produces same output)
+ * 2. Numeric hashes are stable across multiple calls
+ * 3. Different numeric values produce different hashes
+ */
+TEST(RegressionTest, NumericHashingConsistency) {
+    fnv64 hasher;
+
+    // Test integer types - hash the same value multiple times
+    const int32_t test_int = 42;
+    auto hash1 = hasher(test_int);
+    auto hash2 = hasher(test_int);
+    auto hash3 = hasher(test_int);
+
+    // All hashes of the same value must be identical
+    EXPECT_EQ(hash1, hash2) << "Integer hashing is not deterministic";
+    EXPECT_EQ(hash2, hash3) << "Integer hashing is not stable";
+
+    // Different values must produce different hashes
+    const int32_t test_int2 = 43;
+    auto hash4 = hasher(test_int2);
+    EXPECT_NE(hash1, hash4) << "Different integers produce same hash";
+
+    // Test floating point types
+    const double test_double = 3.14159;
+    auto double_hash1 = hasher(test_double);
+    auto double_hash2 = hasher(test_double);
+    auto double_hash3 = hasher(test_double);
+
+    EXPECT_EQ(double_hash1, double_hash2) << "Double hashing is not deterministic";
+    EXPECT_EQ(double_hash2, double_hash3) << "Double hashing is not stable";
+
+    const double test_double2 = 2.71828;
+    auto double_hash4 = hasher(test_double2);
+    EXPECT_NE(double_hash1, double_hash4) << "Different doubles produce same hash";
+
+    // Test various integer sizes to ensure byte representation is correct
+    std::vector<std::pair<std::int64_t, hash64>> test_cases;
+    for (int i = 0; i < 100; ++i) {
+        std::int64_t value = i * 12345;
+        auto hash = hasher(value);
+        test_cases.emplace_back(value, hash);
+    }
+
+    // Verify consistency - hash the same values again
+    for (const auto& [value, expected_hash] : test_cases) {
+        auto rehash = hasher(value);
+        EXPECT_EQ(rehash, expected_hash)
+            << "Inconsistent hash for value " << value;
+    }
+
+    // Test edge cases that might trigger stack corruption
+    EXPECT_EQ(hasher(0), hasher(0));
+    EXPECT_EQ(hasher(-1), hasher(-1));
+    EXPECT_EQ(hasher(std::numeric_limits<int64_t>::max()),
+              hasher(std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(hasher(std::numeric_limits<int64_t>::min()),
+              hasher(std::numeric_limits<int64_t>::min()));
+}
+
+/**
+ * @brief Regression test for floating-point byte representation bug
+ *
+ * Ensures that floating-point values are consistently converted to bytes
+ * and that the hash function correctly handles their representation.
+ */
+TEST(RegressionTest, FloatingPointByteRepresentation) {
+    fnv64 hasher;
+    fnv32 hasher32;
+
+    // Test that NaN, infinity, etc. are handled consistently
+    const float test_vals_f[] = {
+        0.0f, -0.0f, 1.0f, -1.0f,
+        3.14159f, 2.71828f,
+        std::numeric_limits<float>::min(),
+        std::numeric_limits<float>::max(),
+        std::numeric_limits<float>::epsilon()
+    };
+
+    for (float val : test_vals_f) {
+        auto hash1 = hasher(val);
+        auto hash2 = hasher(val);
+        EXPECT_EQ(hash1, hash2) << "Float " << val << " hashing not deterministic";
+    }
+
+    const double test_vals_d[] = {
+        0.0, -0.0, 1.0, -1.0,
+        3.14159265358979323846, 2.71828182845904523536,
+        std::numeric_limits<double>::min(),
+        std::numeric_limits<double>::max(),
+        std::numeric_limits<double>::epsilon()
+    };
+
+    for (double val : test_vals_d) {
+        auto hash1 = hasher(val);
+        auto hash2 = hasher(val);
+        EXPECT_EQ(hash1, hash2) << "Double " << val << " hashing not deterministic";
+
+        // Also test with 32-bit hasher
+        auto hash32_1 = hasher32(val);
+        auto hash32_2 = hasher32(val);
+        EXPECT_EQ(hash32_1, hash32_2) << "Double " << val << " 32-bit hashing not deterministic";
+    }
+}
+
+// ==================== Thread Safety Tests ====================
+
+/**
+ * @brief Test that hash functions are thread-safe for concurrent use
+ *
+ * Hash functions should produce deterministic results even when called
+ * concurrently from multiple threads. This tests:
+ * 1. No data races during concurrent hashing
+ * 2. Deterministic results across threads
+ * 3. Thread-safe initialization and usage
+ */
+TEST(ThreadSafetyTest, ConcurrentHashingDeterminism) {
+    fnv64 hasher;
+    constexpr int num_threads = 8;
+    constexpr int iterations_per_thread = 1000;
+
+    // Test data
+    std::vector<std::string> test_strings = {
+        "hello", "world", "concurrent", "hashing",
+        "thread", "safety", "test", "data"
+    };
+
+    // Expected hashes (computed once)
+    std::vector<hash64> expected_hashes;
+    for (const auto& str : test_strings) {
+        expected_hashes.push_back(hasher(str));
+    }
+
+    // Storage for results from all threads
+    std::vector<std::thread> threads;
+    std::atomic<int> errors{0};
+
+    // Lambda for each thread
+    auto hash_worker = [&](int thread_id) {
+        fnv64 local_hasher; // Each thread has its own hasher instance
+
+        for (int i = 0; i < iterations_per_thread; ++i) {
+            for (size_t j = 0; j < test_strings.size(); ++j) {
+                auto result = local_hasher(test_strings[j]);
+
+                // Verify result matches expected hash
+                if (result != expected_hashes[j]) {
+                    errors.fetch_add(1, std::memory_order_relaxed);
+                }
+            }
+        }
+    };
+
+    // Launch threads
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(hash_worker, i);
+    }
+
+    // Wait for all threads
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    // Verify no errors occurred
+    EXPECT_EQ(errors.load(), 0)
+        << "Concurrent hashing produced inconsistent results";
+}
+
+/**
+ * @brief Test thread safety with shared hasher instance
+ *
+ * Tests whether a single hasher instance can be safely used from
+ * multiple threads simultaneously (stateless operation).
+ */
+TEST(ThreadSafetyTest, SharedHasherInstance) {
+    // Create a single shared hasher
+    const fnv64 hasher; // const to ensure read-only access
+
+    constexpr int num_threads = 16;
+    constexpr int iterations = 500;
+
+    std::atomic<int> mismatches{0};
+    std::vector<std::thread> threads;
+
+    // Expected result for test string
+    const std::string test_str = "shared_hasher_test";
+    const auto expected = hasher(test_str);
+
+    // Lambda for concurrent access
+    auto worker = [&]() {
+        for (int i = 0; i < iterations; ++i) {
+            auto result = hasher(test_str);
+            if (result != expected) {
+                mismatches.fetch_add(1, std::memory_order_relaxed);
+            }
+
+            // Also test with different data
+            auto result2 = hasher(std::to_string(i));
+            // Just verify it doesn't crash - result varies by i
+            EXPECT_FALSE(result2.is_zero());
+        }
+    };
+
+    // Launch threads
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(worker);
+    }
+
+    // Join all threads
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    EXPECT_EQ(mismatches.load(), 0)
+        << "Shared hasher produced inconsistent results";
+}
+
+/**
+ * @brief Stress test for concurrent hash composition
+ *
+ * Tests that algebraic operations (XOR, composition) are thread-safe.
+ */
+TEST(ThreadSafetyTest, ConcurrentComposition) {
+    fnv64 h1;
+    fnv64 h2;
+
+    // Create composed hash function
+    auto composed = h1 ^ h2;
+
+    constexpr int num_threads = 8;
+    constexpr int iterations = 1000;
+
+    std::atomic<int> errors{0};
+    std::vector<std::thread> threads;
+
+    const std::string test_data = "composition_test";
+    const auto expected = composed(test_data);
+
+    auto worker = [&]() {
+        for (int i = 0; i < iterations; ++i) {
+            auto result = composed(test_data);
+            if (result != expected) {
+                errors.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+    };
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(worker);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    EXPECT_EQ(errors.load(), 0)
+        << "Concurrent composition produced inconsistent results";
+}
+
+/**
+ * @brief Test thread safety of hash value operations
+ *
+ * Ensures that hash value algebraic operations are thread-safe.
+ */
+TEST(ThreadSafetyTest, ConcurrentHashValueOperations) {
+    constexpr int num_threads = 8;
+    constexpr int iterations = 1000;
+
+    // Create base hash values
+    hash64 h1;
+    hash64 h2;
+    for (int i = 0; i < 8; ++i) {
+        h1[i] = static_cast<uint8_t>(i * 17);
+        h2[i] = static_cast<uint8_t>(i * 23);
+    }
+
+    // Expected results
+    const auto expected_xor = h1 ^ h2;
+    const auto expected_complement = ~h1;
+
+    std::atomic<int> errors{0};
+    std::vector<std::thread> threads;
+
+    auto worker = [&]() {
+        for (int i = 0; i < iterations; ++i) {
+            // Test XOR
+            auto result_xor = h1 ^ h2;
+            if (result_xor != expected_xor) {
+                errors.fetch_add(1, std::memory_order_relaxed);
+            }
+
+            // Test complement
+            auto result_complement = ~h1;
+            if (result_complement != expected_complement) {
+                errors.fetch_add(1, std::memory_order_relaxed);
+            }
+
+            // Test that operations don't modify originals
+            EXPECT_EQ(h1[0], static_cast<uint8_t>(0 * 17));
+            EXPECT_EQ(h2[0], static_cast<uint8_t>(0 * 23));
+        }
+    };
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(worker);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    EXPECT_EQ(errors.load(), 0)
+        << "Concurrent hash value operations produced errors";
+}
+
+/**
+ * @brief Test for data races using ThreadSanitizer
+ *
+ * This test is designed to trigger ThreadSanitizer if there are any
+ * data races in the hash function implementation. It creates heavy
+ * contention by having many threads hash the same data simultaneously.
+ */
+TEST(ThreadSafetyTest, NoDataRaces) {
+    constexpr int num_threads = 32; // High thread count for contention
+    constexpr int iterations = 100;
+
+    fnv64 shared_hasher;
+    std::vector<std::thread> threads;
+
+    // Shared test data (read-only, safe to share)
+    const std::vector<std::string> shared_data = {
+        "test1", "test2", "test3", "test4", "test5"
+    };
+
+    // Counter for completed operations (atomic for thread safety)
+    std::atomic<uint64_t> operations_completed{0};
+
+    auto worker = [&]() {
+        for (int i = 0; i < iterations; ++i) {
+            for (const auto& data : shared_data) {
+                // This should not cause data races
+                volatile auto result = shared_hasher(data);
+                (void)result; // Suppress unused variable warning
+
+                operations_completed.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+    };
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(worker);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    // Verify all operations completed
+    EXPECT_EQ(operations_completed.load(),
+              num_threads * iterations * shared_data.size());
+}
+
+// ==================== FNV Official Test Vectors ====================
+
+/**
+ * @brief Test FNV-1a implementation against official test vectors
+ *
+ * These test vectors are from the official FNV specification to ensure
+ * our implementation is correct and matches the standard.
+ *
+ * Source: http://www.isthe.com/chongo/tech/comp/fnv/
+ */
+TEST(FNVTestVectors, FNV1a_64bit_OfficialVectors) {
+    fnv64 hasher;
+
+    // Official FNV-1a 64-bit test vectors
+    struct TestVector {
+        std::string input;
+        uint64_t expected_hash;
+    };
+
+    std::vector<TestVector> test_vectors = {
+        // Empty string (official test vector)
+        {"", 0xcbf29ce484222325ULL},
+
+        // Single characters (official test vectors)
+        {"a", 0xaf63dc4c8601ec8cULL},
+        {"b", 0xaf63df4c8601f1a5ULL},
+        {"c", 0xaf63de4c8601eff2ULL},
+
+        // Common test strings (official test vector)
+        {"foobar", 0x85944171f73967e8ULL},
+
+        // Additional test strings (computed with correct FNV-1a)
+        {"chongo was here!\n", 0x46810940eff5f915ULL},
+        {"chongo <Landon Curt Noll> /\\../\\", 0x2c8f4c9af81bcf06ULL},
+
+        // Numeric strings
+        {"127.0.0.1", 0xaabafe7104d914beULL},
+
+        // Special characters
+        {"\n", 0xaf63c74c8601c8ddULL},
+        {"\r", 0xaf63c04c8601bcf8ULL},
+        {"\r\n", 0x083cb407b4f40f36ULL},
+    };
+
+    for (const auto& tv : test_vectors) {
+        auto result = hasher(tv.input);
+
+        // Convert hash_value<8> to uint64_t for comparison
+        uint64_t result_u64 = 0;
+        std::memcpy(&result_u64, result.data().data(), sizeof(uint64_t));
+
+        EXPECT_EQ(result_u64, tv.expected_hash)
+            << "FNV-1a hash mismatch for input: \"" << tv.input << "\"";
+    }
+}
+
+/**
+ * @brief Test FNV-1a 32-bit implementation against official test vectors
+ */
+TEST(FNVTestVectors, FNV1a_32bit_OfficialVectors) {
+    fnv32 hasher;
+
+    // Official FNV-1a 32-bit test vectors
+    struct TestVector {
+        std::string input;
+        uint32_t expected_hash;
+    };
+
+    std::vector<TestVector> test_vectors = {
+        // Empty string (official test vector)
+        {"", 0x811c9dc5U},
+
+        // Single characters (official test vectors)
+        {"a", 0xe40c292cU},
+        {"b", 0xe70c2de5U},
+        {"c", 0xe60c2c52U},
+
+        // Common test strings (official test vector)
+        {"foobar", 0xbf9cf968U},
+
+        // Longer strings (computed with correct FNV-1a)
+        {"chongo was here!\n", 0xd49930d5U},
+
+        // Numeric strings
+        {"127.0.0.1", 0x08a3d11eU},
+    };
+
+    for (const auto& tv : test_vectors) {
+        auto result = hasher(tv.input);
+
+        // Convert hash_value<4> to uint32_t for comparison
+        uint32_t result_u32 = 0;
+        std::memcpy(&result_u32, result.data().data(), sizeof(uint32_t));
+
+        EXPECT_EQ(result_u32, tv.expected_hash)
+            << "FNV-1a 32-bit hash mismatch for input: \"" << tv.input << "\"";
+    }
+}
+
+/**
+ * @brief Test FNV-1a with binary data
+ *
+ * Ensures the hash function correctly handles non-text binary data.
+ */
+TEST(FNVTestVectors, BinaryData) {
+    fnv64 hasher;
+
+    // Binary test data including null bytes
+    std::vector<uint8_t> binary_data = {0x00, 0x01, 0x02, 0xFF, 0xFE, 0x00};
+
+    // Hash as span
+    auto result1 = hasher(std::span<const uint8_t>(binary_data.data(), binary_data.size()));
+
+    // Hash the same data again
+    auto result2 = hasher(std::span<const uint8_t>(binary_data.data(), binary_data.size()));
+
+    // Should be deterministic
+    EXPECT_EQ(result1, result2);
+
+    // Different data should produce different hash
+    std::vector<uint8_t> different_data = {0x00, 0x01, 0x02, 0xFF, 0xFE, 0x01}; // Last byte differs
+    auto result3 = hasher(std::span<const uint8_t>(different_data.data(), different_data.size()));
+
+    EXPECT_NE(result1, result3);
+}
+
+/**
+ * @brief Test FNV with long strings
+ *
+ * Verifies correct behavior with longer inputs.
+ */
+TEST(FNVTestVectors, LongStrings) {
+    fnv64 hasher;
+
+    // Create a long string
+    std::string long_str(1000, 'a');
+    auto hash1 = hasher(long_str);
+
+    // Change one character in the middle
+    long_str[500] = 'b';
+    auto hash2 = hasher(long_str);
+
+    // Should produce different hashes (avalanche effect)
+    EXPECT_NE(hash1, hash2);
+
+    // Hash should be deterministic
+    auto hash3 = hasher(long_str);
+    EXPECT_EQ(hash2, hash3);
+}
+
+/**
+ * @brief Test FNV with incremental construction
+ *
+ * Ensures that hashing different chunks produces different results
+ * (FNV is not incremental, each call is independent).
+ */
+TEST(FNVTestVectors, NonIncremental) {
+    fnv64 hasher;
+
+    std::string part1 = "hello";
+    std::string part2 = "world";
+    std::string combined = "helloworld";
+
+    auto hash_combined = hasher(combined);
+    auto hash_part1 = hasher(part1);
+    auto hash_part2 = hasher(part2);
+
+    // Hashing separately should not equal hashing together
+    // (FNV is not designed for incremental hashing)
+    EXPECT_NE(hash_part1, hash_combined);
+    EXPECT_NE(hash_part2, hash_combined);
 }
 
 // ==================== Main function ====================

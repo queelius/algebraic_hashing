@@ -29,7 +29,7 @@ We are thrilled to announce the release of **AlgebraicHashing v2.0.0**, a comple
 - Perfect for teaching hash function theory and modern C++
 
 ### 🏗️ **Production Ready**
-- **99.4% test coverage** with 48 comprehensive test cases
+- **Comprehensive test coverage** with extensive test suite
 - Multi-platform CI/CD (Linux, Windows, macOS)
 - Professional packaging (Conan, vcpkg, CMake)
 - Memory safety with sanitizer validation
@@ -126,7 +126,7 @@ Benchmarks show significant improvements over v1.x:
 
 ## 🧪 Quality Metrics
 
-- **Test Coverage**: 99.4% line coverage, 96% branch coverage
+- **Test Coverage**: Comprehensive test suite with extensive validation (coverage reporting in progress)
 - **Static Analysis**: Clean with clang-tidy and cppcheck
 - **Sanitizers**: Passes AddressSanitizer, UBSan, ThreadSanitizer
 - **Compilers Tested**: GCC 10-13, Clang 12-17, MSVC 2019-2022

@@ -33,7 +33,7 @@ AlgebraicHashing is a **header-only C++20 library** that provides an elegant fra
 - **Minimal memory footprint**
 
 ### 🔧 **Production Ready**
-- **99.4% test coverage** with comprehensive validation
+- **Comprehensive test coverage** with extensive validation
 - **Multi-platform support** (Linux, Windows, macOS)
 - **Professional packaging** (Conan, vcpkg, CMake)
 - **Extensive documentation** and tutorials
@@ -217,7 +217,7 @@ AlgebraicHashing is built on a **layered architecture** that separates concerns:
 
 AlgebraicHashing maintains **exceptional quality standards**:
 
-- **99.4% test coverage** across 48 comprehensive test cases
+- **Comprehensive test suite** with extensive test cases covering core functionality
 - **Multi-platform CI** (Linux, Windows, macOS)
 - **Multiple compilers** (GCC 10+, Clang 12+, MSVC 2019+)
 - **Sanitizer validation** (AddressSanitizer, UBSan, ThreadSanitizer)
