@@ -1,1 +1,0 @@
-# AlgebraicHashing Documentation
