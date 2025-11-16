@@ -1,0 +1,95 @@
+site_name: AlgebraicHashing
+site_description: Modern C++20 library for elegant algebraic hash function composition
+site_author: Alex Towell
+site_url: https://queelius.github.io/algebraic_hashing/
+
+docs_dir: docs_mkdocs
+
+repo_name: queelius/algebraic_hashing
+repo_url: https://github.com/queelius/algebraic_hashing
+edit_uri: edit/master/docs_mkdocs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - tags
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/queelius/algebraic_hashing
+  version:
+    provider: mike
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - Concepts:
+    - Why AlgebraicHashing?: concepts/motivation.md
+    - Core Concepts: concepts/core-concepts.md
+    - Hash Functions as Algebra: concepts/algebraic-structure.md
+    - Design Philosophy: concepts/philosophy.md
+  - Tutorials:
+    - Basic Usage: tutorials/basic-usage.md
+    - Composition Operators: tutorials/composition.md
+    - Type Safety with Concepts: tutorials/type-safety.md
+    - Performance & Statistics: tutorials/performance.md
+  - Examples:
+    - Common Use Cases: examples/use-cases.md
+    - Advanced Patterns: examples/advanced.md
+  - Reference:
+    - API Documentation: reference/api.md
+    - Testing Guide: reference/testing.md
+    - Contributing: reference/contributing.md
+  - About:
+    - Release Notes: about/changelog.md
+    - License: about/license.md
