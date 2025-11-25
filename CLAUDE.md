@@ -68,12 +68,32 @@ lcov --list coverage.info
 - `BUILD_BENCHMARKS=ON/OFF` - Build performance benchmarks (default: OFF)
 - `ENABLE_CONCEPTS_CHECKING=ON/OFF` - Enable extensive concepts validation (default: ON)
 - `ENABLE_STATISTICS=ON/OFF` - Enable performance statistics collection (default: ON)
+- `ENABLE_COVERAGE=ON/OFF` - Enable code coverage reporting with lcov/genhtml (default: OFF)
+
+### Coverage Reporting
+
+```bash
+# Build with coverage enabled
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
+cmake --build build
+
+# Run tests
+cd build && ctest
+
+# Generate coverage report (HTML)
+cmake --build . --target coverage
+
+# Open coverage report in browser
+cmake --build . --target coverage_open
+```
+
+Coverage reports are generated in `build/coverage_html/index.html`.
 
 ### Package Management
 
 ```bash
 # Install via Conan (recommended for development)
-conan install --requires=algebraic_hashing/2.0.0@
+conan install --requires=algebraic_hashing/2.0.1@
 
 # Create Conan package locally
 conan create . --build=missing
@@ -146,7 +166,11 @@ cmph/                         # External CMPH library integration
 
 Located in `tests/`:
 - `test_modern_architecture.cpp` - Core functionality tests
-- `test_comprehensive_coverage.cpp` - Extensive coverage tests
+- `test_comprehensive_coverage.cpp` - Extensive coverage tests including:
+  - FNV-1a official test vectors (32-bit and 64-bit)
+  - Thread safety tests (concurrent hashing, shared hasher instances)
+  - Numeric hashing consistency regression tests
+  - Algebraic property validation
 
 Run via CMake/CTest:
 ```bash
@@ -250,6 +274,11 @@ class fnv64 : public hash_function_base<fnv64> {
 };
 ```
 
+**Thread Safety Note**: Hash functions are thread-safe for concurrent hashing, but statistics collection is NOT thread-safe. To disable statistics entirely (recommended for multi-threaded applications), compile with:
+```bash
+cmake -B build -DCMAKE_CXX_FLAGS="-DALGEBRAIC_HASHING_DISABLE_STATISTICS"
+```
+
 ### Concepts for Type Safety
 
 ```cpp
@@ -272,7 +301,27 @@ auto complement = ~h1;          // Bitwise complement
 
 ## Documentation
 
-### Generate API Docs
+The project has two documentation systems:
+- **MkDocs**: Conceptual documentation, tutorials, and motivation - https://queelius.github.io/algebraic_hashing/
+- **Doxygen**: API reference documentation
+
+### MkDocs Documentation
+
+Located in `docs_mkdocs/`:
+- `index.md` - Landing page with features and quick example
+- `concepts/motivation.md` - Why algebraic hash composition matters
+- `getting-started/` - Installation and quickstart guides
+- `reference/api.md` - API overview
+
+```bash
+# Serve locally for development
+mkdocs serve
+
+# Deploy to GitHub Pages
+mkdocs gh-deploy
+```
+
+### Generate API Docs (Doxygen)
 
 ```bash
 # Install Doxygen first
