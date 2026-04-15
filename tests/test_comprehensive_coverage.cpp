@@ -4,6 +4,9 @@
 #include "../include/algebraic_hashing/core/hash_value.hpp"
 #include "../include/algebraic_hashing/dsl/algebraic_operations.hpp"
 #include "../include/algebraic_hashing/functions/fnv_hash_modern.hpp"
+#include "../include/algebraic_hashing/functions/murmur3_hash.hpp"
+#include "../include/algebraic_hashing/functions/xxhash.hpp"
+#include "../include/algebraic_hashing/functions/sha256_hash.hpp"
 #include <string>
 #include <vector>
 #include <array>
@@ -20,6 +23,7 @@
 #include <limits>
 #include <thread>
 #include <atomic>
+#include <random>
 
 using namespace algebraic_hashing;
 using namespace algebraic_hashing::functions;
@@ -1102,6 +1106,459 @@ TEST(FNVTestVectors, NonIncremental) {
     // (FNV is not designed for incremental hashing)
     EXPECT_NE(hash_part1, hash_combined);
     EXPECT_NE(hash_part2, hash_combined);
+}
+
+// ==================== Property-Based Algebraic Tests ====================
+
+/**
+ * @brief Test algebraic group properties for hash values under XOR
+ *
+ * Hash values form an abelian group (H, ^) where:
+ * - Closure: h1 ^ h2 is in H
+ * - Associativity: (h1 ^ h2) ^ h3 = h1 ^ (h2 ^ h3)
+ * - Identity: h ^ zero = h
+ * - Inverse: h ^ h = zero
+ * - Commutativity: h1 ^ h2 = h2 ^ h1
+ */
+TEST(AlgebraicProperties, HashValueGroupProperties) {
+    std::mt19937 rng(42);
+    std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+    // Generate random hash values
+    auto make_random_hash = [&]() {
+        hash64 h;
+        for (auto& byte : h.data()) {
+            byte = dist(rng);
+        }
+        return h;
+    };
+
+    for (int trial = 0; trial < 100; ++trial) {
+        hash64 h1 = make_random_hash();
+        hash64 h2 = make_random_hash();
+        hash64 h3 = make_random_hash();
+        hash64 zero = hash64::zero();
+
+        // Closure (implicit - type system ensures this)
+
+        // Associativity: (h1 ^ h2) ^ h3 = h1 ^ (h2 ^ h3)
+        EXPECT_EQ((h1 ^ h2) ^ h3, h1 ^ (h2 ^ h3))
+            << "Associativity failed on trial " << trial;
+
+        // Identity: h ^ zero = h
+        EXPECT_EQ(h1 ^ zero, h1) << "Identity failed on trial " << trial;
+        EXPECT_EQ(zero ^ h1, h1) << "Left identity failed on trial " << trial;
+
+        // Inverse: h ^ h = zero
+        EXPECT_EQ(h1 ^ h1, zero) << "Self-inverse failed on trial " << trial;
+
+        // Commutativity: h1 ^ h2 = h2 ^ h1
+        EXPECT_EQ(h1 ^ h2, h2 ^ h1) << "Commutativity failed on trial " << trial;
+    }
+}
+
+/**
+ * @brief Test complement as involution
+ *
+ * The complement operator ~ is an involution: ~~h = h
+ */
+TEST(AlgebraicProperties, ComplementInvolution) {
+    std::mt19937 rng(42);
+    std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+    auto make_random_hash = [&]() {
+        hash64 h;
+        for (auto& byte : h.data()) {
+            byte = dist(rng);
+        }
+        return h;
+    };
+
+    for (int trial = 0; trial < 100; ++trial) {
+        hash64 h = make_random_hash();
+
+        // Double complement is identity
+        EXPECT_EQ(~~h, h) << "Involution failed on trial " << trial;
+
+        // Complement XOR original gives all ones
+        auto all_ones = hash64::ones();
+        EXPECT_EQ(h ^ ~h, all_ones) << "h ^ ~h != ones on trial " << trial;
+    }
+}
+
+/**
+ * @brief Test XOR composition commutativity for hash functions
+ */
+TEST(AlgebraicProperties, XORCompositionCommutativity) {
+    fnv64 f;
+    murmur3_64 g;
+
+    std::vector<std::string> test_inputs = {
+        "", "a", "hello", "world", "test123",
+        std::string(100, 'x'),
+        "The quick brown fox jumps over the lazy dog"
+    };
+
+    auto fg = f ^ g;
+    auto gf = g ^ f;
+
+    for (const auto& input : test_inputs) {
+        EXPECT_EQ(fg(input), gf(input))
+            << "XOR composition not commutative for input: " << input;
+    }
+}
+
+/**
+ * @brief Test XOR composition associativity for hash functions
+ */
+TEST(AlgebraicProperties, XORCompositionAssociativity) {
+    fnv64 f;
+    murmur3_64 g;
+    xxhash64 h;
+
+    std::vector<std::string> test_inputs = {
+        "", "a", "hello", "test123"
+    };
+
+    auto fg_h = (f ^ g) ^ h;
+    auto f_gh = f ^ (g ^ h);
+
+    for (const auto& input : test_inputs) {
+        EXPECT_EQ(fg_h(input), f_gh(input))
+            << "XOR composition not associative for input: " << input;
+    }
+}
+
+/**
+ * @brief Test that same hasher XOR'd with itself produces zero
+ */
+TEST(AlgebraicProperties, SelfInverseComposition) {
+    fnv64 f;
+
+    std::vector<std::string> test_inputs = {
+        "", "a", "hello", "world", "test"
+    };
+
+    auto ff = f ^ f;
+
+    for (const auto& input : test_inputs) {
+        auto result = ff(input);
+        EXPECT_TRUE(result.is_zero())
+            << "f ^ f should produce zero for input: " << input;
+    }
+}
+
+// ==================== New Hash Function Tests ====================
+
+/**
+ * @brief Basic tests for MurmurHash3
+ */
+TEST(MurmurHash3Test, BasicFunctionality) {
+    murmur3_64 hasher;
+
+    // Determinism
+    EXPECT_EQ(hasher("hello"), hasher("hello"));
+    EXPECT_EQ(hasher("world"), hasher("world"));
+
+    // Different inputs produce different outputs
+    EXPECT_NE(hasher("hello"), hasher("world"));
+    EXPECT_NE(hasher("test"), hasher("Test"));
+
+    // Empty string hash is consistent (MurmurHash3 with seed=0 can produce 0 for empty input)
+    auto empty_hash = hasher("");
+    EXPECT_EQ(empty_hash, hasher(""));  // Consistency check
+}
+
+/**
+ * @brief Test MurmurHash3 seeding
+ */
+TEST(MurmurHash3Test, Seeding) {
+    murmur3_64 h1(0);
+    murmur3_64 h2(1);
+    murmur3_64 h3(42);
+
+    std::string input = "test_string";
+
+    // Different seeds produce different hashes
+    EXPECT_NE(h1(input), h2(input));
+    EXPECT_NE(h2(input), h3(input));
+    EXPECT_NE(h1(input), h3(input));
+
+    // Same seed is deterministic
+    murmur3_64 h1_copy(0);
+    EXPECT_EQ(h1(input), h1_copy(input));
+}
+
+/**
+ * @brief Test MurmurHash3 variants
+ */
+TEST(MurmurHash3Test, Variants) {
+    murmur3_32 h32;
+    murmur3_64 h64;
+    murmur3_128 h128;
+
+    std::string input = "test";
+
+    auto r32 = h32(input);
+    auto r64 = h64(input);
+    auto r128 = h128(input);
+
+    EXPECT_EQ(r32.to_hex().length(), 8);   // 4 bytes = 8 hex chars
+    EXPECT_EQ(r64.to_hex().length(), 16);  // 8 bytes = 16 hex chars
+    EXPECT_EQ(r128.to_hex().length(), 32); // 16 bytes = 32 hex chars
+}
+
+/**
+ * @brief Basic tests for xxHash
+ */
+TEST(XXHashTest, BasicFunctionality) {
+    xxhash64 hasher;
+
+    // Determinism
+    EXPECT_EQ(hasher("hello"), hasher("hello"));
+    EXPECT_EQ(hasher("world"), hasher("world"));
+
+    // Different inputs produce different outputs
+    EXPECT_NE(hasher("hello"), hasher("world"));
+    EXPECT_NE(hasher("test"), hasher("Test"));
+
+    // Empty string hash is consistent
+    auto empty_hash = hasher("");
+    EXPECT_EQ(empty_hash, hasher(""));  // Consistency check
+}
+
+/**
+ * @brief Test xxHash seeding
+ */
+TEST(XXHashTest, Seeding) {
+    xxhash64 h1(0);
+    xxhash64 h2(1);
+    xxhash64 h3(12345);
+
+    std::string input = "test_string";
+
+    // Different seeds produce different hashes
+    EXPECT_NE(h1(input), h2(input));
+    EXPECT_NE(h2(input), h3(input));
+    EXPECT_NE(h1(input), h3(input));
+
+    // Same seed is deterministic
+    xxhash64 h1_copy(0);
+    EXPECT_EQ(h1(input), h1_copy(input));
+}
+
+/**
+ * @brief Test xxHash variants
+ */
+TEST(XXHashTest, Variants) {
+    xxhash32 h32;
+    xxhash64 h64;
+
+    std::string input = "test";
+
+    auto r32 = h32(input);
+    auto r64 = h64(input);
+
+    EXPECT_EQ(r32.to_hex().length(), 8);   // 4 bytes = 8 hex chars
+    EXPECT_EQ(r64.to_hex().length(), 16);  // 8 bytes = 16 hex chars
+}
+
+/**
+ * @brief Basic tests for SHA-256
+ */
+TEST(SHA256Test, BasicFunctionality) {
+    sha256 hasher;
+
+    // Determinism
+    EXPECT_EQ(hasher("hello"), hasher("hello"));
+    EXPECT_EQ(hasher("world"), hasher("world"));
+
+    // Different inputs produce different outputs
+    EXPECT_NE(hasher("hello"), hasher("world"));
+    EXPECT_NE(hasher("test"), hasher("Test"));
+
+    // Correct output size
+    auto result = hasher("test");
+    EXPECT_EQ(result.to_hex().length(), 64); // 32 bytes = 64 hex chars
+}
+
+/**
+ * @brief Test SHA-256 against known test vectors
+ */
+TEST(SHA256Test, KnownTestVectors) {
+    sha256 hasher;
+
+    // Test vector: empty string
+    auto empty_hash = hasher("");
+    EXPECT_EQ(empty_hash.to_hex(),
+              "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+    // Test vector: "abc"
+    auto abc_hash = hasher("abc");
+    EXPECT_EQ(abc_hash.to_hex(),
+              "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+
+    // Test vector: "hello"
+    auto hello_hash = hasher("hello");
+    EXPECT_EQ(hello_hash.to_hex(),
+              "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824");
+}
+
+/**
+ * @brief Test SHA-256 streaming interface
+ */
+TEST(SHA256Test, StreamingInterface) {
+    sha256 streaming;
+    sha256 oneshot;
+
+    std::string part1 = "hello";
+    std::string part2 = "world";
+    std::string combined = "helloworld";
+
+    // One-shot hash
+    auto result1 = oneshot(combined);
+
+    // Streaming hash
+    streaming.reset();
+    streaming.update(reinterpret_cast<const uint8_t*>(part1.data()), part1.size());
+    streaming.update(reinterpret_cast<const uint8_t*>(part2.data()), part2.size());
+    auto result2 = streaming.finalize();
+
+    EXPECT_EQ(result1, result2);
+}
+
+// ==================== Cross-Hash Function Composition Tests ====================
+
+/**
+ * @brief Test that different hash functions can be composed
+ */
+TEST(CompositionTest, CrossFunctionXOR) {
+    fnv64 fnv;
+    murmur3_64 murmur;
+    xxhash64 xx;
+
+    // All compositions should work
+    auto fnv_murmur = fnv ^ murmur;
+    auto fnv_xx = fnv ^ xx;
+    auto murmur_xx = murmur ^ xx;
+    auto all_three = fnv ^ murmur ^ xx;
+
+    std::string input = "test";
+
+    // All should produce valid hashes
+    auto r1 = fnv_murmur(input);
+    auto r2 = fnv_xx(input);
+    auto r3 = murmur_xx(input);
+    auto r4 = all_three(input);
+
+    // None should be zero (extremely unlikely)
+    EXPECT_FALSE(r1.is_zero());
+    EXPECT_FALSE(r2.is_zero());
+    EXPECT_FALSE(r3.is_zero());
+    EXPECT_FALSE(r4.is_zero());
+
+    // All should be different (extremely likely)
+    EXPECT_NE(r1, r2);
+    EXPECT_NE(r2, r3);
+    EXPECT_NE(r3, r4);
+}
+
+/**
+ * @brief Test sequential composition with different hash functions
+ */
+TEST(CompositionTest, SequentialComposition) {
+    fnv64 fnv;
+    murmur3_64 murmur;
+
+    auto fnv_then_murmur = fnv * murmur;  // fnv(murmur(x))
+    auto murmur_then_fnv = murmur * fnv;  // murmur(fnv(x))
+
+    std::string input = "test";
+
+    auto r1 = fnv_then_murmur(input);
+    auto r2 = murmur_then_fnv(input);
+
+    // Order matters - should be different
+    EXPECT_NE(r1, r2);
+
+    // Should be deterministic
+    EXPECT_EQ(fnv_then_murmur(input), fnv_then_murmur(input));
+}
+
+// ==================== Avalanche Effect Tests ====================
+
+/**
+ * @brief Test avalanche effect - small changes should flip ~50% of bits
+ */
+TEST(AvalancheTest, SingleBitChange) {
+    auto test_avalanche = [](auto hasher, const std::string& name) {
+        std::string base = "test_avalanche_string";
+        auto base_hash = hasher(base);
+
+        int total_bit_flips = 0;
+        int total_tests = 0;
+
+        // Test single character changes
+        for (size_t i = 0; i < base.size(); ++i) {
+            std::string modified = base;
+            modified[i] = static_cast<char>((modified[i] + 1) % 256);
+
+            auto modified_hash = hasher(modified);
+            auto diff = base_hash ^ modified_hash;
+            total_bit_flips += diff.popcount();
+            total_tests++;
+        }
+
+        double average_flip_rate = static_cast<double>(total_bit_flips) /
+                                   (total_tests * 64);  // 64 bits
+
+        // Good avalanche should flip around 50% of bits
+        // Accept 30-70% as reasonable
+        EXPECT_GT(average_flip_rate, 0.30)
+            << name << " avalanche too low: " << average_flip_rate;
+        EXPECT_LT(average_flip_rate, 0.70)
+            << name << " avalanche too high: " << average_flip_rate;
+    };
+
+    test_avalanche(fnv64{}, "FNV64");
+    test_avalanche(murmur3_64{}, "MurmurHash3");
+    test_avalanche(xxhash64{}, "xxHash64");
+}
+
+// ==================== Distribution Tests ====================
+
+/**
+ * @brief Test hash distribution - outputs should be roughly uniform
+ */
+TEST(DistributionTest, ByteDistribution) {
+    auto test_distribution = [](auto hasher, const std::string& name) {
+        std::array<int, 256> byte_counts{};
+
+        // Hash many strings, count first byte distribution
+        for (int i = 0; i < 10000; ++i) {
+            auto hash = hasher(std::to_string(i));
+            byte_counts[hash[0]]++;
+        }
+
+        // Expected count per byte value: 10000 / 256 ≈ 39
+        double expected = 10000.0 / 256.0;
+
+        // Calculate chi-squared statistic
+        double chi_squared = 0;
+        for (int count : byte_counts) {
+            double diff = count - expected;
+            chi_squared += (diff * diff) / expected;
+        }
+
+        // Chi-squared with 255 df, p=0.01: 310.5
+        // Accept if less than this (not terribly biased)
+        EXPECT_LT(chi_squared, 400.0)
+            << name << " distribution too biased, chi-squared: " << chi_squared;
+    };
+
+    test_distribution(fnv64{}, "FNV64");
+    test_distribution(murmur3_64{}, "MurmurHash3");
+    test_distribution(xxhash64{}, "xxHash64");
 }
 
 // ==================== Main function ====================
